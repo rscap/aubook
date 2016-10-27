@@ -3,25 +3,45 @@
 from pydub import AudioSegment
 from glob import glob
 import os
-try:
-    inputPathy = raw_input('please provide path to files to concatentate: ')
-    if inputPathy[:1] == '~':
-        inputPathy = os.path.expanduser(inputPathy[:1])+inputPathy[1:]
-    if inputPathy[-1] != '/':
-        inputPathy = inputPathy+'/'
-    inputPathy = inputPathy+'*.mp3'
-    print inputPathy
+while True:
+    try:
+        inputPathy = raw_input('please provide path to files to concatentate: ')
+        if not inputPathy:
+            raise ValueError('no input')
+        if inputPathy[:1] == '~':
+            inputPathy = os.path.expanduser(inputPathy[:1])+inputPathy[1:]
+        if inputPathy[-1] != '/':
+            inputPathy = inputPathy+'/'
+        inputPathy = inputPathy+'*.mp3'
+        print inputPathy
+        break
+    except ValueError as e:
+        print(e)
+while True:
+  try:
+    outputPathy = raw_input('Please provide output path: ')
+    if not outputPathy:
+        raise ValueError('no input')
+    if outputPathy[-1] != '/':
+        outputPathy = outputPathy+'/'
+    if outputPathy[:1] == '~':
+        ouputPathy = os.path.expanduser(outputPathy[:1])+outputPathy[1:]
+    break
+  except ValueError as e:
+      print(e)
 
-outputPathy = raw_input('Please provide output path: ')
-if outputPathy[-1] != '/':
-    outputPathy = outputPathy+'/'
-if onputPathy[:1] == '~':
-    ouputPathy = os.path.expanduser(outputPathy[:1])+outputPathy[1:]
-outputName = raw_input('Please provide output file name: ')
-if outputName[-4:] != '.mp3':
-    outputName = outputName + '.mp3'
-outputPathy = outputPathy+outputName
-print outputPathy
+while True:
+  try:
+    outputName = raw_input('Please provide output file name: ')
+    if not outputName:
+        raise ValueError('no input')
+    if outputName[-4:] != '.mp3':
+        outputName = outputName + '.mp3'
+    outputPathy = outputPathy+outputName
+    print outputPathy
+    break
+  except ValueError as e:
+       print(e)
 
 inputPath = inputPathy #'/Users/apsnooz/Desktop/Beginners/Beginners 1-7.mp3'
 outputPath = outputPathy #'/Users/apsnooz/Desktop/testOutPut.mp3'
