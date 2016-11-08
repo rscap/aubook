@@ -1,0 +1,15 @@
+<!-- extned from base layout -->
+{% extends "layout.html" %}
+
+{% block content %}
+  <h1>THINGS</h1>
+  <from action="" methods="post" name="nogin">
+    {{ form.hidden_tag() }}
+    <p>
+      Please enter your id:<br>
+      {{ form.idn(size=80) }}<br>
+    </p>
+    <p>{{ form.rememeber_me }} Member?</p>
+    <p><input type="submit" value="shine on"></p>
+  </form>
+{% endblock %}

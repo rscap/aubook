@@ -1,0 +1,132 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    {% if title %}
+    <title>{{ title }}</title>
+    {% else %}
+    <title>Concat</title>
+    {% endif %}
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
+    <!--<script type="text/javascript" src="{{ url_for('static', filename='dnd.js') }}"> -->
+    <!--
+    <script type="text/javascrtip">
+    // move this to reference of dnd.js
+
+    if(window.FileReader) {
+     var drop;
+     addEventHandler(window, 'load', function() {
+        var status = document.getElementById('status');
+        drop   = document.getElementById('drop');
+        var list   = document.getElementById('list');
+
+        function cancel(e) {
+          if (e.preventDefault) { e.preventDefault(); }
+          return false;
+        }
+
+        // Tells the browser that we *can* drop on this target
+        addEventHandler(drop, 'dragover', cancel);
+        addEventHandler(drop, 'dragenter', cancel);
+
+    addEventHandler(drop, 'drop', function (e) {
+      e = e || window.event; // get window.event if e argument missing (in IE)
+      if (e.preventDefault) { e.preventDefault(); } // stops the browser from redirecting off to the image.
+
+      var dt    = e.dataTransfer;
+      var files = dt.files;
+      for (var i=0; i<files.length; i++) {
+        var file = files[i];
+        var reader = new FileReader();
+
+        //attach event handlers here...
+
+        reader.readAsDataURL(file);
+    addEventHandler(reader, 'loadend', function(e, file) {
+        var bin           = this.result;
+        var newFile       = document.createElement('div');
+        newFile.innerHTML = 'Loaded : '+file.name+' size '+file.size+' B';
+        list.appendChild(newFile);
+        var fileNumber = list.getElementsByTagName('div').length;
+        status.innerHTML = fileNumber < files.length
+                         ? 'Loaded 100% of file '+fileNumber+' of '+files.length+'...'
+                         : 'Done loading. processed '+fileNumber+' files.';
+
+        var img = document.createElement("img");
+        img.file = file;
+        img.src = bin;
+        list.appendChild(img);
+    }.bindToEventHandler(file));
+      }
+      return false;
+    });
+    Function.prototype.bindToEventHandler = function bindToEventHandler() {
+      var handler = this;
+      var boundParameters = Array.prototype.slice.call(arguments);
+      //create closure
+      return function(e) {
+          e = e || window.event; // get window.event if e argument missing (in IE)
+          boundParameters.unshift(e);
+          handler.apply(this, boundParameters);
+      }
+    };
+      });
+    } else {
+      document.getElementById('status').innerHTML = 'Your browser does not support the HTML5 FileReader.';
+    }
+    function addEventHandler(obj, evt, handler) {
+        if(obj.addEventListener) {
+            // W3C method
+            obj.addEventListener(evt, handler, false);
+        } else if(obj.attachEvent) {
+            // IE method.
+            obj.attachEvent('on'+evt, handler);
+        } else {
+            // Old school method.
+            obj['on'+evt] = handler;
+        }
+    }
+
+    </script>
+    <style>
+    #drop {
+      min-height: 150px;
+      width: 250px;
+      margin: 15px;
+      padding: 10px;
+      box-shadow: 10px 5px 25px #888888;
+    }
+    </style>
+ -->
+</head>
+<body>
+  <br><br><br>
+
+ <div class="w3-container">
+   <h2>Inpit Card</h2>
+   <div class="w3-card-4">
+    <div class="w3-container w3-green">
+      <h2> hey yo </h2>
+    </div>
+    <form class="w3-container" action="{{ url_for('index') }}" method=post>
+        <p>
+        <input class="w3-input" type="file" name="file" multiple webkitdirectory  accept="audio/*" id="fileURL"/>
+        <label>Path</label></p>
+        <p>
+        <input class="w3-input" type=text name=Name>
+        <label>Name</label></p>
+        <button class="w3-btn w3-hover-green" type=submit value=Upload>Go</button><p>
+    </form>
+  </div>
+  </div>
+  <br><br>
+  <!--
+  <DIV id="status">Drag the files from a folder to a selected area ...</DIV>
+  <div id="drop">words</div>
+  <DIV id="list"></DIV>
+  <DIV ></DIV>
+-->
+
+</body>
