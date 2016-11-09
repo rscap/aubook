@@ -1,4 +1,7 @@
+from flask import render_template, flash, redirect
 from app import app
+from .forms import LoginForm
+from .forms import uploadForm
 
 @app.route('/')
 def home():
@@ -7,7 +10,7 @@ def home():
 @app.route('/oy')
 def oy():
     return 'OY!'
-    
+
 '''
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -30,8 +33,16 @@ def login():
         flash('Login requested for ID="%s", member_me=%s' %
             (form.openid.data, str(form.remember_me.data)))
         return redirect('index')
-    return render_template('forming.html', title='Shine ON', form=form)
+    return render_template('login.html', title='Login', form=form)
 
 @app.route('/index', methods=['GET', 'POST'])
 def index(title='WAHT?!'):
     return render_template('index.html',title=title)
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload():
+    form = uploadForm()
+    if form.validate_on_submit():
+        #flash('errors')
+        return redirect('/')
+    return render_template('upload.html', form=form)

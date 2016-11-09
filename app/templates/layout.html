@@ -1,15 +1,32 @@
 <!DOCTYPE html>
 <html>
   <head>
-  <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
-
+    <link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css">
+    {% if title %}
+    <title>{{ title }}</title>
+    {% else %}
+    <title>Ersatz Title</title>
+    {% endif %}
   </head>
 
   <body>
-    <div class="container">
+    {% if title %}
+    <h1 class="w3-container w3-blue">{{ title }}</h1>
+    {% else %}
+    <h1 class="w3-container w3-blue">Ersatz Title</h1>
+    {% endif %}
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul>
+    {% for message in messages %}
+        <li>{{ message }} </li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+    <div class="w3-container">
       {% block content %}
       {% endblock %}
-    </div>
-
+   </div>
   </body>
 </html>

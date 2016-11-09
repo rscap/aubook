@@ -2,14 +2,19 @@
 {% extends "layout.html" %}
 
 {% block content %}
-  <h1>THINGS</h1>
-  <from action="" methods="post" name="nogin">
+  <h1>LOGIN</h1>
+  <from action="" methods="post" name="login">
+
     {{ form.hidden_tag() }}
     <p>
       Please enter your id:<br>
-      {{ form.idn(size=80) }}<br>
+      {{ form.openid(size=50) }}<br>
+      {% for error in form.openid.errors %}
+          <span style="color: red;">[{{ error }}]</span>
+      {% endfor %}
     </p>
     <p>{{ form.rememeber_me }} Member?</p>
     <p><input type="submit" value="shine on"></p>
+
   </form>
 {% endblock %}

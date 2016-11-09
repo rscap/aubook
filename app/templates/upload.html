@@ -1,0 +1,15 @@
+<!-- extned from base layout -->
+{% extends "layout.html" %}
+
+{% block content %}
+  <h1>Upload</h1>
+  <from action="" methods="post" name="nogin">
+    {{ form.hidden_tag() }}
+    <p>
+      Please enter your id:<br>
+      {{ form.name(size=80) }}<br>
+    </p>
+    </p>
+    <p><input type="submit" value="submit"></p>
+  </form>
+{% endblock %}
