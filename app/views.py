@@ -1,18 +1,13 @@
-#!/usr/bin/env python
-
-from flask import Flask, flash, url_for, request, render_template, redirect, send_from_directory
-
-from .forms import LoginForm
-
-app = Flask(__name__)
-app.config['WTF_CSRF'] = True
-app.config['SECRET_KEY'] = "UrqnGnpztN"
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['DEBUG'] = True
+from app import app
 
 @app.route('/')
 def home():
     return 'hey yo'
+
+@app.route('/oy')
+def oy():
+    return 'OY!'
+    
 '''
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -40,18 +35,3 @@ def login():
 @app.route('/index', methods=['GET', 'POST'])
 def index(title='WAHT?!'):
     return render_template('index.html',title=title)
-
-
-
-
-
-
-
-
-
-
-
-
-
-if __name__ == '__main__':
-    app.run(port=4444)
