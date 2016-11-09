@@ -1,4 +1,4 @@
-# This file must be used with "source bin/activate" *from bash*
+ This file must be used with "source bin/activate" *from bash*
 # you cannot run it directly
 
 deactivate () {
@@ -40,7 +40,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/Users/snooz/Dropbox/scripts/concat/concat"
+VIRTUAL_ENV="/Users/snooz/Dropbox/scripts/concat/concatEnv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
