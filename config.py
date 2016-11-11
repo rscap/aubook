@@ -1,3 +1,10 @@
+
+
+UPLOAD_FOLDER = 'uploads'
+ALLOWED_EXTENSIONS = set(['jpg','mp3'])
+
 WTF_CSRF_ENABLED = True
 SECRET_KEY = 'YOUneverGunNa_Gue55$$'
 DEBUG = True
+UPLOAD_FOLDER = UPLOAD_FOLDER
+USE_RELOADER = True
