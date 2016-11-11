@@ -2,8 +2,13 @@ import os
 from flask import render_template, flash, request, redirect, url_for
 from werkzeug.utils import secure_filename
 from app import app
-# from .forms import LoginForm
-# from .forms import uploadForm
+
+UPLOAD_FOLDER = 'uploads'
+ALLOWED_EXTENSIONS = set(['jpg','mp3'])
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 @app.route('/')
 def home():
@@ -13,21 +18,6 @@ def home():
 def oy():
     return 'OY!'
 
-'''
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    error = None
-    if request.method == 'POST':
-        if request.form['username'] !=app.config['USERNAME']:
-            error = 'Invalid username'
-        elif request.form['password'] != app.config['PASSWORD']:
-            error = 'Invalid password'
-        else:
-            session['logged_in'] = True
-            flash('You were logged in')
-            return redirect(url_for('show_entries'))
-    return render_template('login.html', error=error)
-'''
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -36,10 +26,6 @@ def login():
             (form.openid.data, str(form.remember_me.data)))
         return redirect('index')
     return render_template('login.html', title='Login', form=form)
-
-@app.route('/index', methods=['GET', 'POST'])
-def index(title='WAHT?!'):
-    return render_template('index.html',title=title)
 
 @app.route("/upload", methods=['GET','POST'])
 def upload():
