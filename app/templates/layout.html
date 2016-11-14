@@ -17,11 +17,13 @@
     {% endif %}
     {% with messages = get_flashed_messages() %}
     {% if messages %}
-    <ul>
-    {% for message in messages %}
-        <li>{{ message }} </li>
-    {% endfor %}
-    </ul>
+    <div class="w3-panel w-pink;"
+      <ul>
+      {% for message in messages %}
+          <li class="w3-panel w-pink;">{{ message }} </li>
+      {% endfor %}
+      </ul>
+    </div>
     {% endif %}
     {% endwith %}
     <div class="w3-container">

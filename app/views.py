@@ -40,8 +40,10 @@ def upload():
         dir = UPLOAD_FOLDER+'/'+request.form['name']
 
         uploaded_files = request.files.getlist("file")
+        print('\n')
         for file in uploaded_files:
-            #print(file.filename)
+            print('file name:')
+            print(file.filename)
             if file.filename == '':
               flash('No files selected')
               return redirect(request.url)
@@ -53,14 +55,17 @@ def upload():
                 if not os.path.exists(dir):
                     print('folder does not exist. Creating folder...')
                     os.makedirs(dir)
-
+                print('uploading '+file.filename)
                 file.save(os.path.join(dir, filename))
+                print('upload of '+filename+' complete')
                 # save the filename into a list, we'll use it later
                 filenames.append(filename)
-                a = concatAudio(dir,request.form['name'])
-                a.concat()
             else:
-                flash('That file type is not allowed.')
-                return redirect(request.url)
+                flash('Only files of type mp3 and jpg will be uploaded.')
+                #return redirect(request.url)
+        print('\n')
+        a = concatAudio(dir,request.form['name'])
+        a.concat()
+        #cwd = print('cwd = '+os.getcwd())
         #filenames = []
     return render_template('upload.html', filenames=filenames, title='all the new files')
