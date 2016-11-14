@@ -1,7 +1,7 @@
 import os
 from flask import render_template, flash, request, redirect, url_for
 from werkzeug.utils import secure_filename
-from mp3concat import concatAudio
+from mp3Concat import concatAudio
 from app import app
 
 UPLOAD_FOLDER = 'uploads'
@@ -57,9 +57,10 @@ def upload():
                 file.save(os.path.join(dir, filename))
                 # save the filename into a list, we'll use it later
                 filenames.append(filename)
+                a = concatAudio(dir,request.form['name'])
+                a.concat()
             else:
                 flash('That file type is not allowed.')
                 return redirect(request.url)
-        a = concat(files,dir)
         #filenames = []
     return render_template('upload.html', filenames=filenames, title='all the new files')

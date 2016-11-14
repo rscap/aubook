@@ -4,65 +4,41 @@ from pydub import AudioSegment
 from glob import glob
 import os
 
-while True:
-    try:
-        inputPathy = raw_input('please provide path to files to concatentate: ')
-        if not inputPathy:
-            raise ValueError('no input')
-        if inputPathy[:1] == '~':
-            inputPathy = os.path.expanduser(inputPathy[:1])+inputPathy[1:]
-        if inputPathy[-1] != '/':
-            inputPathy = inputPathy+'/'
-        inputPathy = inputPathy+'*.mp3'
-        print inputPathy
-        break
-    except ValueError as e:
-        print(e)
-while True:
-  try:
-    outputPathy = raw_input('Please provide output path: ')
-    if not outputPathy:
-        raise ValueError('no input')
-    if outputPathy[:1] == '~':
-        print ('~ is first character')
-        outputPathy = os.path.expanduser(outputPathy[:1])+outputPathy[1:]
-    if outputPathy[-1] != '/':
-        outputPathy = outputPathy+'/'
-    print outputPathy
-    break
-  except ValueError as e:
-      print(e)
+class concatAudio:
 
-while True:
-  try:
-    outputName = raw_input('Please provide output file name: ')
-    if not outputName:
-        raise ValueError('no input')
-    if outputName[-4:] != '.mp3':
-        print('does not end in .mp3')
-        outputName = outputName + '.mp3'
-    outputPathy = outputPathy+outputName
-    print outputPathy
-    break
-  except ValueError as e:
-       print(e)
+    def __init__(self,dir,name):
+        #self.filenames = filenames
+        self.dir = dir
+        self.name = name
 
-inputPath = inputPathy
-outputPath = outputPathy
-## empty sound to put the combined files into
-fullaudio = AudioSegment.empty()
-## get all files from the path
+    def concat(self):
+        outputPath = self.dir+'/'+self.name+'.mp3'
+        # print('outputPath = '+str(outputPath))
+        # print('\n')
+        # print('...starting concat')
 
-# ideas - parse text to list only file name
-num_mp3 = 0
-print('compling folder contents into single file...')
-#for mp3 in glob("/Users/apsnooz/Desktop/testmp3/*.mp3"):
-for mp3 in glob(inputPath):
-    print('concatenating '+mp3)
-    segment = AudioSegment.from_mp3(mp3)
-    fullaudio = fullaudio + segment
-    #num_mp3 += 1
-    #print(num_mp3)
+        mp3_files = self.dir+'/*.mp3'
+        # print('mp3_files = '+mp3_files)
+        ## empty sound to put the combined files into
+        fullaudio = AudioSegment.empty()
+        # count = 0
+        # for item in glob(mp3_files):
+        #     print(str(count)+' '+item)
+        #     count += 1
+        # print('glob(self.dir) = '+str(glob(self.dir)))
+        # num_mp3 = 0
+        print('compling folder contents into single file...')
+        for file in glob(mp3_files):
+            print('concatenating '+file)
+            segment = AudioSegment.from_mp3(file)
+            fullaudio = fullaudio + segment
+            #num_mp3 += 1
+            #print(num_mp3)
+        fullaudio.export(outputPath, format="mp3").close()
 
-fullaudio.export(outputPath, format="mp3").close()
-print('file generation complete. See '+outputPath)
+
+# a = concatAudio('/Users/snooz/Downloads/mp3','test')
+# print(a)
+# # print('a.name = '+a.name)
+# # print('a.dir = '+a.dir)
+# a.concat()
