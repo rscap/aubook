@@ -39,6 +39,7 @@ while True:
     if not outputName:
         raise ValueError('no input')
     if outputName[-4:] != '.mp3':
+        print('does not end in .mp3')
         outputName = outputName + '.mp3'
     outputPathy = outputPathy+outputName
     print outputPathy

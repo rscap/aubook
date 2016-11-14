@@ -1,6 +1,7 @@
 import os
 from flask import render_template, flash, request, redirect, url_for
 from werkzeug.utils import secure_filename
+from mp3concat import concatAudio
 from app import app
 
 UPLOAD_FOLDER = 'uploads'
@@ -30,11 +31,13 @@ def login():
 @app.route("/upload", methods=['GET','POST'])
 def upload():
     filenames = []
-    if request.method == 'POST':
 
+    if request.method == 'POST':
         if request.form['name'] == '':
             flash('Please enter file name')
             return redirect(request.url)
+
+        dir = UPLOAD_FOLDER+'/'+request.form['name']
 
         uploaded_files = request.files.getlist("file")
         for file in uploaded_files:
@@ -47,26 +50,16 @@ def upload():
                 # Make the filename safe, remove unsupported chars
                 filename = secure_filename(file.filename)
                 # Move the file from the temp folder ot the upload folder
-                #file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                if not os.path.exists(dir):
+                    print('folder does not exist. Creating folder...')
+                    os.makedirs(dir)
+
                 file.save(os.path.join(dir, filename))
                 # save the filename into a list, we'll use it later
                 filenames.append(filename)
             else:
                 flash('That file type is not allowed.')
                 return redirect(request.url)
-            #return redirect(url_for('uploaded_file', filenames=filenames))
-
-        #uploaded_files = request.files.getlist("file")
-        name = request.form['name']
-        # print('name = '+name)
-        # print(UPLOAD_FOLDER)
-        dir = UPLOAD_FOLDER+'/'+name
-        # print(dir)
-        if not os.path.exists(dir):
-            print('folder does not exist. Creating folder...')
-            os.makedirs(dir)
-
-        filenames = []
-        count = 0
-
+        a = concat(files,dir)
+        #filenames = []
     return render_template('upload.html', filenames=filenames, title='all the new files')
