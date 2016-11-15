@@ -1,7 +1,7 @@
 import os
 from flask import render_template, flash, request, redirect, url_for
 from werkzeug.utils import secure_filename
-from mp3Concat import concatAudio
+from mp3concat import concatAudio
 from app import app
 
 UPLOAD_FOLDER = 'uploads'

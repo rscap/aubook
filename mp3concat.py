@@ -35,6 +35,12 @@ class concatAudio:
             #num_mp3 += 1
             #print(num_mp3)
         fullaudio.export(outputPath, format="mp3").close()
+        print('self.name = '+self.name)
+        for file in glob(mp3_files):
+            # print('file = '+file)
+            # print('os.path.basename(file) = '+os.path.basename(file))
+            if file != outputPath:
+                os.remove(file)
 
 
 # a = concatAudio('/Users/snooz/Downloads/mp3','test')
