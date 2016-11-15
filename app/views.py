@@ -1,10 +1,10 @@
 import os
-from flask import render_template, flash, request, redirect, url_for
+from flask import render_template, flash, request, redirect, url_for, send_from_directory
 from werkzeug.utils import secure_filename
 from mp3concat import concatAudio
 from app import app
 
-UPLOAD_FOLDER = 'uploads'
+UPLOAD_FOLDER = 'app/static/audio'
 ALLOWED_EXTENSIONS = set(['jpg','mp3'])
 
 def allowed_file(filename):
@@ -27,6 +27,15 @@ def login():
             (form.openid.data, str(form.remember_me.data)))
         return redirect('index')
     return render_template('login.html', title='Login', form=form)
+
+@app.route('/player',methods=['GET'])
+def player():
+    return render_template('player.html',title='player')
+
+@app.route('/static/audio/<path:path>')
+def hello(path):
+    print('path = '+path)
+    return send_from_directory('audio', path)
 
 @app.route("/upload", methods=['GET','POST'])
 def upload():
@@ -66,6 +75,4 @@ def upload():
         print('\n')
         a = concatAudio(dir,request.form['name'])
         a.concat()
-        #cwd = print('cwd = '+os.getcwd())
-        #filenames = []
     return render_template('upload.html', filenames=filenames, title='all the new files')
