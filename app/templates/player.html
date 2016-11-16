@@ -12,13 +12,26 @@
     {% endif %}
 
     <audio controls="true">
-      <source src="/audio/foo.mp3" >
+      <source src="static/audio/foo/foo.mp3" >
       Your browser does not support the audio element.
     </audio>
 
     <div>
-      
-
+      <ul style="list-style-type:none">
+      {% for book in booklist %}
+          <!-- <li>{{ book }}</li> -->
+          <li><a href="javascript:void(0);">{{book}}</a></li>
+      {% endfor %}
+      </ul>
     </div>
+
+    <script type='text/javascript'>
+      {% for book in booklist %}
+         $('li').click(function(){
+           var str = $(this).text()
+           $('audio').attr('src', '/static/audio/'+str);
+         });
+      {% endfor %}
+    </script>
 
 {% endblock %}

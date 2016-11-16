@@ -30,9 +30,29 @@ def login():
 
 @app.route('/player',methods=['GET'])
 def player():
-    return render_template('player.html',title='player')
+    books = {}
+    booklist = []
+    bookDirs = []
+    print(UPLOAD_FOLDER)
+    dirs = os.listdir(UPLOAD_FOLDER)
+    print('dirs = '+str(dirs))
+    for dir in dirs:
+        if dir[:1] != '.' and dir[-4:] != '.mp3':
+            bookDir = UPLOAD_FOLDER+'/'+dir
+            print('bookDir = '+str(bookDir))
+            p = os.listdir(bookDir)
+            #print('p = '+str(p))
+            for i in p:
+                if i.endswith('.mp3'):
+                    booklist.append(i)
+            print('booklist = '+str(booklist))
 
-@app.route('/static/audio/<path:path>')
+    # for folder in UPLOAD_FOLDER:
+    #     print(folder)
+    # return render_template('player.html',title='player',thing=a)
+    return render_template('player.html',title='player',booklist=booklist,bookDirs=bookDirs)
+
+@app.route('/audio/<path:path>')
 def hello(path):
     print('path = '+path)
     return send_from_directory('audio', path)
