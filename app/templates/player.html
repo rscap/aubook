@@ -11,7 +11,7 @@
     <h3>No Title Present</h3>
     {% endif %}
 
-    <audio controls="true">
+    <audio onclick="play(this)" id='audio' controls="true">
       <source src="static/audio/foo/foo.mp3" >
       Your browser does not support the audio element.
     </audio>
@@ -26,12 +26,39 @@
     </div>
 
     <script type='text/javascript'>
+
+    document.body.onkeypress = function(e){
+      if(e.keyCode == 32){
+        console.log('space bar pressed')
+        if (aud.paused) {
+          console.log('status is paused')
+          console.log('playing')
+          aud.play()
+        } else {
+          console.log('pausing')
+          aud.pause()
+        }
+        //aud.addEventListener('pause',aud.play())
+        //aud.addEventListener('playing',aud.pause())
+      }
+    }
+    console.log('start!')
+    var aud = document.getElementById('audio')
+    console.log('aud.paused state: '+aud.paused)
+    //console.log('aud = '+aud)
+    aud.addEventListener('pause', getTime)
+    // jQuery $('#aud').on('pause', getTime)
+    function getTime (){
+      console.log('current time = '+aud.currentTime)
+    }
+
       {% for book in booklist %}
          $('li').click(function(){
            var str = $(this).text()
            $('audio').attr('src', '/static/audio/'+str);
          });
       {% endfor %}
+
     </script>
 
 {% endblock %}
