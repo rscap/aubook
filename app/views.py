@@ -1,5 +1,5 @@
 import os
-from sqlalchemy import *
+from app.database import db_session
 from flask import render_template, flash, request, redirect, url_for, send_from_directory
 from werkzeug.utils import secure_filename
 from mp3concat import concatAudio
@@ -12,7 +12,11 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
-engine = create_engine('postgresql://aubookadmin:YiAch4iAZtxX34o9PKibcdcu8jWjVuU2AhT6ZgBPwn@localhost:5432/aubook')
+
+@app.teardown_appcontext
+def shutdown_session(exception=None):
+    db_session.remove()
+
 
 @app.route('/')
 def home():
