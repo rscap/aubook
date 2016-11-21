@@ -11,7 +11,7 @@
     <h3 id='currentPlaying'>No Title Present</h3>
     {% endif %}
 
-    <audio onclick="play(this)" id='audio' controls="true">
+    <audio width:"100%"; onclick="play(this)" id='audio' controls="true">
       <source src="static/audio/foo/foo.mp3" >
       Your browser does not support the audio element.
     </audio>
@@ -57,13 +57,6 @@
       //    });
       // {% endfor %}
 
-    //   {% for book in booklist %}
-    //     document.getElementsByTagName('li');.onclick(function(){
-    //       var str = document.getElementsByTagName(this).text()
-    //         console.log(str)
-    //       document.getElementById('audio').attr('src', '/static/audio/'+str);
-    //     });
-    //  {% endfor %}
 
     var get_li = function() {
       //get the LI tags
@@ -73,9 +66,8 @@
       for (i=0; i<nr_li; i++) {
         // apply the 'onclick' event to each, assigning a function that must be called by this event
         tags_li[i].onclick = function() {
-          //var clasa = this.getAttribute('class')  // gets the value of the class attribute
           var continut = this.textContent || this.innerText; // gets the content
-          console.log('continut: '+continut);
+          // console.log('continut: '+continut);
           document.getElementById('audio').setAttribute('src', '/static/audio/'+continut);
           document.getElementById('currentPlaying').innerHTML = continut;
         };
