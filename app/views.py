@@ -1,4 +1,5 @@
-import os, sqlalchemy
+import os
+from sqlalchemy import *
 from flask import render_template, flash, request, redirect, url_for, send_from_directory
 from werkzeug.utils import secure_filename
 from mp3concat import concatAudio
@@ -10,6 +11,8 @@ ALLOWED_EXTENSIONS = set(['jpg','mp3'])
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
+engine = create_engine('postgresql://aubookadmin:YiAch4iAZtxX34o9PKibcdcu8jWjVuU2AhT6ZgBPwn@localhost:5432/aubook')
 
 @app.route('/')
 def home():
