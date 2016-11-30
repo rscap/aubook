@@ -4,7 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 engine = create_engine('postgresql://aubookadmin:YiAch4iAZtxX34o9PKibcdcu8jWjVuU2AhT6ZgBPwn@localhost:5432/aubook')
 
-db_session = scoped_session(sessionmaker(autocommit=False,
+session = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,
                                          bind=engine))
 

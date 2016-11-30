@@ -1,14 +1,19 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.orm import relationship, backref
-from app.database import Base
+from app import db
+#from sqlalchemy import ForeignKey
+#from sqlalchemy.orm import relationship
 
-class User(Base):
-    __tablename__ = 'users'
-    id = Column(Integer, primary_key=True)
-    name = Column(String(50), unique=True)
-    email = Column(String(120), unique=True)
-    password = Column(String(120))
-    #book = relationship("Book", secondary=BookUser, back_ref='User')
+BookUser = db.Table('bookUsers',
+  db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+  db.Column('book_id', db.Integer, db.ForeignKey('book.id'))
+)
+
+class User(db.Model):
+    #__tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), unique=True)
+    email = db.Column(db.String(120), unique=True)
+    password = db.Column(db.String(120))
+    books = db.relationship('Book', secondary=BookUser, backref=db.backref('books')) #, lazy='dynamic')
 
     def __init__(self, name=None, email=None, password=None):
         self.name = name
@@ -19,11 +24,11 @@ class User(Base):
         return "<User(name='%s', email='%s',password='%s')>" % (self.name, self.email, self.password)
 
 
-class Book(Base):
-    __tablename__ = 'books'
-    id = Column(Integer, primary_key=True)
-    title = Column(String(120))
-    author = Column(String(120))
+class Book(db.Model):
+    #__tablename__ = 'book'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(120))
+    author = db.Column(db.String(120))
     #curretTime = Column(String(10))
     #user_id = Column(Integer, ForeignKey(User.id))
     #user = relationship("User" secondary=BookUser, backref='users')
@@ -36,38 +41,21 @@ class Book(Base):
     def __repr__(self):
         return "<Book(title='%s', author='%s')>" % (self.title, self.author)
 
-class Bookmark(Base):
+class Bookmark(db.Model):
     __tablename__ = 'bookmarks'
-    id = Column(Integer, primary_key=True)
-    desc = Column(String(120))
-    time = Column(String(20))
-    book_id = Column(Integer, ForeignKey(Book.id))
+    id = db.Column(db.Integer, primary_key=True)
+    desc = db.Column(db.String(120))
+    time = db.Column(db.String(20))
+    book_id = db.Column(db.Integer, db.ForeignKey(Book.id), index=True)
     #book = relationship(Book, backref=backref('books', lazy='dynamic'))
-    user_id = Column(Integer, ForeignKey(User.id))
+    user_id = db.Column(db.Integer, db.ForeignKey(User.id),index=True)
     #user = relationship(User, backref=backref('users', lazy='dynamic'))
 
     def __init__(self, desc=None, time=None, book_id=None, user_id=None):
-        self.desk = desc
+        self.desc = desc
         self.time = time
         self.book_id = book_id
         self.user_id = user_id
 
     def __repr__(self):
         return "<Bookmark(desc='%s', time='%s', book_id='%s', user_id='%s')>" % (self.desc, self.time,self.book_id,self.user_id)
-
-class BookUser(Base):
-    __tablename__ = 'BookUser'
-    id = Column(Integer, primary_key=True)
-    currentTime = Column(String(10))
-    user_id = Column(Integer, ForeignKey(User.id))
-    book_id = Column(Integer, ForeignKey(Book.id))
-    #user = relationship(User, backref=backref('users', lazy='dynamic'))
-    #book = relationship(Book, backref=backref('books', lazy='dynamic'))
-
-    def __init__(self,currentTime = None, user_id=None, book_id=None):
-        self.currentTime = currentTime
-        self.user_id = user_id
-        self.book_id = book_id
-
-    def __repr__(self):
-        return "<BookUser(currentTime='%s', user_id='%s',book_id='%s')>" % (self.currentTime,self.user_id,self.book_id)
