@@ -1,5 +1,7 @@
 import os
 #from app.database import db_session
+from app import models
+from app import db
 from flask import render_template, flash, request, redirect, url_for, send_from_directory
 from werkzeug.utils import secure_filename
 from mp3concat import concatAudio
@@ -69,12 +71,12 @@ def upload():
     filenames = []
 
     if request.method == 'POST':
-        if request.form['name'] == '':
-            flash('Please enter file name')
+        if request.form['title'] == '':
+            flash('Please enter a title of the book that is to be uploaded')
             return redirect(request.url)
 
-        dir = UPLOAD_FOLDER+'/'+request.form['name']
-
+        dir = UPLOAD_FOLDER+'/'+request.form['title']
+        
         uploaded_files = request.files.getlist("file")
         print('\n')
         for file in uploaded_files:
@@ -100,6 +102,10 @@ def upload():
                 flash('Only files of type mp3 and jpg will be uploaded.')
                 #return redirect(request.url)
         print('\n')
-        a = concatAudio(dir,request.form['name'])
+        a = concatAudio(dir,request.form['title'])
         a.concat()
+
+        newBook = models.Book(title=request.form['title'],author=request.form['author'])
+        db.session.add(newBook)
+        db.session.commit()
     return render_template('upload.html', filenames=filenames, title='all the new files')
