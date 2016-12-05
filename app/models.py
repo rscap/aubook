@@ -3,19 +3,19 @@ import datetime
 #from sqlalchemy import ForeignKey
 #from sqlalchemy.orm import relationship
 
-BookUser = db.Table('bookUsers',
-  db.Column('id', db.Integer, primary_key=True),
-  db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
-  db.Column('book_id', db.Integer, db.ForeignKey('book.id')),
-  db.Column('currentTime', db.Float)
-)
+# BookUser = db.Table('bookUsers',
+#   db.Column('id', db.Integer, primary_key=True),
+#   db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+#   db.Column('book_id', db.Integer, db.ForeignKey('book.id')),
+#   db.Column('currentTime', db.Float)
+# )
 
-# class BookUser(db.Model):
-#     __tablename__ = 'book_users'
-#     id = db.Column(db.Integer, primary_key=True)
-#     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-#     book_id = db.Column(db.Integer, db.ForeignKey('book.id'))
-#     currentTime = db.Column(db.Float)
+class BookUser(db.Model):
+    __tablename__ = 'book_users'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    book_id = db.Column(db.Integer, db.ForeignKey('book.id'))
+    currentTime = db.Column(db.Float)
 
 
 class User(db.Model):
@@ -24,8 +24,8 @@ class User(db.Model):
     name = db.Column(db.String(50), unique=True)
     email = db.Column(db.String(120), unique=True)
     password = db.Column(db.String(120))
-    books = db.relationship('Book', secondary=BookUser, backref=db.backref('books')) #, lazy='dynamic')
-    #books = db.relationship('Book', secondary='book_users', backref=db.backref('books')) #, lazy='dynamic')
+    #books = db.relationship('Book', secondary=BookUser, backref=db.backref('books')) #, lazy='dynamic')
+    books = db.relationship('Book', secondary='book_users', backref=db.backref('books')) #, lazy='dynamic')
 
 
     def __init__(self, name=None, email=None, password=None):
