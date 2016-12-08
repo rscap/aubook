@@ -1,24 +1,35 @@
+#################
+#### imports ####
+#################
+
 import os
-#from app.database import db_session
 from app import models
 from app import db
 from flask import render_template, flash, request, redirect, url_for, send_from_directory
 from werkzeug.utils import secure_filename
+from werkzeug.security import check_password_hash, generate_password_hash
 from mp3concat import concatAudio
 from app import app
+from flask_login import current_user
+
+################
+#### config ####
+################
 
 UPLOAD_FOLDER = 'app/static/audio'
 ALLOWED_EXTENSIONS = set(['jpg','mp3'])
+
+##########################
+#### helper functions ####
+##########################
 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
-
-# @app.teardown_appcontext
-# def shutdown_session(exception=None):
-#     db_session.remove()
-
+################
+#### routes ####
+################
 
 @app.route('/')
 def home():
@@ -30,14 +41,27 @@ def oy():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        flash('Login requested for ID="%s", member_me=%s' %
-            (form.openid.data, str(form.remember_me.data)))
-        return redirect('index')
-    return render_template('login.html', title='Login', form=form)
+    if request.method == 'POST':
+        email =  request.form['email']
+        password = request.form['password']
+        user = db.session.query(models.User).filter_by(email=email).first()
+        if not user or not check_password_hash(user.password, password):
+            flash("Incorrect email or password", "danger")
+            return redirect(url_for('login'))
+        login_user(user, remember=True)
+        flash("Logged in successfully,","success")
 
-@app.route('/player',methods=['GET'])
+    current_user_id = current_user.get_id()
+    print(current_user_id)
+    if current_user_id is not None:
+        current_user_id = int(current_user_id)
+        user_object = session.query(User).filter_by(id=current_user_id).one()
+        flash(user_object.name + ", you are logged in. If this is not you, please login as yourself", "warning")
+    else:
+        current_user is None
+    return render_template('login.html', title='Login')
+
+@app.route('/player')
 def player():
     books = {}
     booklist = []
@@ -76,9 +100,9 @@ def upload():
             return redirect(request.url)
 
         dir = UPLOAD_FOLDER+'/'+request.form['title']
-        
+
         uploaded_files = request.files.getlist("file")
-        print('\n')
+        #print('\n')
         for file in uploaded_files:
             print('file name:')
             print(file.filename)

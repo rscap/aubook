@@ -1,0 +1,39 @@
+{% block body %}
+<title>Register</title>
+  <h1>dew it</h1>
+  <!-- {% if error %}
+     <p class="w3-ul w3-red"><strong>Error:</strong> {{ error }}
+  {% endif %} -->
+  <form role="form" method="POST">
+      <h1>Register so you can post your Mini Crossword Times</h1>
+      <div class="username">
+          <label for="username">Username</label>
+          <input type="text" class="form-control" id="username" name="username" placeholder="Username" required autocomplete="off">
+      </div></br>
+      <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" class="form-control" id="password" name="password" placeholder="Password" required autocomplete="off">
+          <input type="password" class="form-control" id="password2" name="password2" placeholder="Password again (to verify)" required autocomplete="off">
+      </div>
+      <div class="form-group">
+          <label for="email">Email address</label>
+          <input type="email" class="form-control" id="email" name="email" placeholder="Email address" required autocomplete="off" required onchange="return check()">
+      </div>
+      <button type="submit" class="btn btn-primary btn-md" onclick = "return check();">Submit</button>
+  </form>
+
+  <script>function check() {
+        var password = document.getElementById('password');
+        var password2 = document.getElementById('password2');
+   	 		if ( password2.value != password.value) {
+   	 			 alert("Your passwords don't match.  Please fix that.");
+           return false;
+    		  }
+        }</script>
+
+  <h2>If you've already registered, please: <b><a href="{{ url_for('login_get')}}">Login</a></b></h2>
+
+  <h2></br>Already register and just forget your password? <b><a href="{{ url_for('pwresetrq_get')}}">Reset your password here.</a></b></h2>
+
+
+{% endblock %}

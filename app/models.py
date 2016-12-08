@@ -28,10 +28,10 @@ class User(db.Model):
     books = db.relationship('Book', secondary='book_users', backref=db.backref('books')) #, lazy='dynamic')
 
 
-    def __init__(self, name=None, email=None, password=None):
+    def __init__(self, name, email, password):
         self.name = name
         self.email = email
-        self.password = password
+        self.password = bcrypt.generate_password_hash(password)
 
     def __repr__(self):
         return "<User(name='%s', email='%s',password='%s')>" % (self.name, self.email, self.password)

@@ -1,18 +1,16 @@
 <!-- extned from base layout -->
 {% extends "layout.html" %}
 
-{% block content %}
-  <h1>LOGIN</h1>
-  <from action="" methods="post" name="login">
-    {{ form.hidden_tag() }}
-    <p>
-      Please enter your id:<br>
-      {{ form.openid(size=50) }}<br>
-      {% for error in form.openid.errors %}
-          <span style="color: red;">[{{ error }}]</span>
-      {% endfor %}
-    </p>
-    <p>{{ form.rememeber_me }} Member?</p>
-    <p><input type="submit" value="uh-huh"></p>
+{% block body %}
+<title>Log on in</title>
+  <h1>dew it</h1>
+  <!-- {% if error %}
+     <p class="w3-ul w3-red"><strong>Error:</strong> {{ error }}
+  {% endif %} -->
+  <form action="" method=post enctype=multipart/form-data>
+    <p><input type=email name=email placeholder="enter your email">
+    <p><input type=password name=password placeholder="enter your password">
+    <p><input class="w3-btn w3-blue" type=submit value=LOGIN>
   </form>
+    Register <a href="">here</a>
 {% endblock %}
