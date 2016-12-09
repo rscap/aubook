@@ -46,10 +46,10 @@ def login():
         password = request.form['password']
         user = db.session.query(models.User).filter_by(email=email).first()
         if not user or not check_password_hash(user.password, password):
-            flash("Incorrect email or password", "danger")
+            flash("Incorrect email or password")
             return redirect(url_for('login'))
         login_user(user, remember=True)
-        flash("Logged in successfully,","success")
+        flash("Logged in successfully,")
 
     current_user_id = current_user.get_id()
     print(current_user_id)
@@ -60,6 +60,36 @@ def login():
     else:
         current_user is None
     return render_template('login.html', title='Login')
+
+@app.route('/register', methods=['GET','POST'])
+def register():
+    if request.method == 'POST':
+        # if request.form['email'] == '':
+        #     flash("Please enter your email address")
+        #     return redirect(request.url)
+        if not request.form['password'] or not request.form['password2']:
+            flash('Please enter and confirm a password')
+            return redirect(request.url)
+        if request.form['password'] != request.form['password2']:
+            flash('Passwords must match')
+            return redirect(request.url)
+        if len(request.form['password']) < 8:
+            flash('The password you provided must have at minimum eight characters')
+            return redirect(request.url)
+        print('checking to see if user exists')
+        user_check = models.User.query.filter_by(email=request.form['email']).first()
+        print('user_check = '+str(user_check))
+        if user_check is not None:
+            flash('That email is already in use. Either chose a new one or try to reset your password')
+            return redirect(request.url)
+        user = models.User(name=request.form['name'],
+                           password=generate_password_hash(request.form['password']),
+                           email=request.form['email'])
+        db.session.add(user)
+        db.session.commit()
+        flash('User successfully registered')
+        return redirect(url_for('player'))
+    return render_template('register.html',title='Register')
 
 @app.route('/player')
 def player():
