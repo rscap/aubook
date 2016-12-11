@@ -10,7 +10,7 @@ from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash, generate_password_hash
 from mp3concat import concatAudio
 from app import app
-from flask_login import current_user
+from flask_login import current_user, login_user, logout_user, login_required
 
 ################
 #### config ####
@@ -52,14 +52,14 @@ def login():
         flash("Logged in successfully,")
 
     current_user_id = current_user.get_id()
-    print(current_user_id)
+    print('CURRENT USER ID = '+str(current_user_id))
     if current_user_id is not None:
         current_user_id = int(current_user_id)
-        user_object = session.query(User).filter_by(id=current_user_id).one()
+        user_object = db.session.query(models.User).filter_by(id=current_user_id).one()
         flash(user_object.name + ", you are logged in. If this is not you, please login as yourself", "warning")
     else:
         current_user is None
-    return render_template('login.html', title='Login')
+    return render_template('player.html', title='play on player')
 
 @app.route('/register', methods=['GET','POST'])
 def register():
