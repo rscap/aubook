@@ -58,8 +58,8 @@ def login():
                 flash("Incorrect email or password")
                 return redirect(url_for('login'))
             login_user(user, remember=True)
-            flash("Logged in successfully,")
-            return redirect(request.args.get('next') or url_for('player'))
+            flash("Logged in successfully")
+            return redirect('player')
 
     # current_user_id = current_user.get_id()
     # print('CURRENT USER ID = '+str(current_user_id))
