@@ -12,6 +12,7 @@ from mp3concat import concatAudio
 from app import app
 from flask_login import current_user, login_user, logout_user, login_required
 
+
 ################
 #### config ####
 ################
@@ -36,30 +37,47 @@ def home():
     return 'hey yo: Audiobook app'
 
 @app.route('/oy')
+@login_required
 def oy():
     return 'OY!'
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == 'POST':
-        email =  request.form['email']
-        password = request.form['password']
-        user = db.session.query(models.User).filter_by(email=email).first()
-        if not user or not check_password_hash(user.password, password):
-            flash("Incorrect email or password")
-            return redirect(url_for('login'))
-        login_user(user, remember=True)
-        flash("Logged in successfully,")
-
     current_user_id = current_user.get_id()
-    print('CURRENT USER ID = '+str(current_user_id))
+    print('current_user_id = '+str(current_user_id))
     if current_user_id is not None:
         current_user_id = int(current_user_id)
         user_object = db.session.query(models.User).filter_by(id=current_user_id).one()
         flash(user_object.name + ", you are logged in. If this is not you, please login as yourself", "warning")
     else:
-        current_user is None
-    return render_template('player.html', title='play on player')
+        if request.method == 'POST':
+            email =  request.form['email']
+            password = request.form['password']
+            user = db.session.query(models.User).filter_by(email=email).first()
+            if not user or not check_password_hash(user.password, password):
+                flash("Incorrect email or password")
+                return redirect(url_for('login'))
+            login_user(user, remember=True)
+            flash("Logged in successfully,")
+            return redirect(request.args.get('next') or url_for('player'))
+
+    # current_user_id = current_user.get_id()
+    # print('CURRENT USER ID = '+str(current_user_id))
+    # if current_user_id is not None:
+    #     current_user_id = int(current_user_id)
+    #     user_object = db.session.query(models.User).filter_by(id=current_user_id).one()
+    #     flash(user_object.name + ", you are logged in. If this is not you, please login as yourself", "warning")
+    # else:
+    #     current_user is None
+    return render_template('login.html', title='Login')
+
+@app.route('/logout')
+@login_required
+def logout():
+    """Logout the current user."""
+    logout_user()
+    flash('You were logged out.')
+    return redirect (url_for('login'))
 
 @app.route('/register', methods=['GET','POST'])
 def register():
@@ -92,6 +110,7 @@ def register():
     return render_template('register.html',title='Register')
 
 @app.route('/player')
+@login_required
 def player():
     books = {}
     booklist = []
@@ -115,22 +134,26 @@ def player():
     # return render_template('player.html',title='player',thing=a)
     return render_template('player.html',title='player',booklist=booklist,bookDirs=bookDirs)
 
+
+
 @app.route('/audio/<path:path>')
+@login_required
 def hello(path):
     print('path = '+path)
     return send_from_directory('audio', path)
 
+
+
+
 @app.route("/upload", methods=['GET','POST'])
+@login_required
 def upload():
     filenames = []
-
     if request.method == 'POST':
         if request.form['title'] == '':
             flash('Please enter a title of the book that is to be uploaded')
             return redirect(request.url)
-
         dir = UPLOAD_FOLDER+'/'+request.form['title']
-
         uploaded_files = request.files.getlist("file")
         #print('\n')
         for file in uploaded_files:
