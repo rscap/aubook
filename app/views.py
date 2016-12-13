@@ -2,14 +2,14 @@
 #### imports ####
 #################
 
-import os
-from app import models
-from app import db
+import os, pytz
+from datetime import datetime
+from app import models, db, keygenerator, app
 from flask import render_template, flash, request, redirect, url_for, send_from_directory
 from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash, generate_password_hash
 from mp3concat import concatAudio
-from app import app
+from sparkpost import SparkPost
 from flask_login import current_user, login_user, logout_user, login_required
 
 
@@ -60,16 +60,43 @@ def login():
             login_user(user, remember=True)
             flash("Logged in successfully")
             return redirect('player')
-
-    # current_user_id = current_user.get_id()
-    # print('CURRENT USER ID = '+str(current_user_id))
-    # if current_user_id is not None:
-    #     current_user_id = int(current_user_id)
-    #     user_object = db.session.query(models.User).filter_by(id=current_user_id).one()
-    #     flash(user_object.name + ", you are logged in. If this is not you, please login as yourself", "warning")
-    # else:
-    #     current_user is None
     return render_template('login.html', title='Login')
+
+@app.route('/pwresetrq', methods=['GET','POST'])
+def pwresetrq():
+    if request.method == 'POST':
+        if db.session.query(models.User).filter_by(email=request.form['email']).first():
+            user = db.session.query(models.User).filter_by(email=request.form['email']).one()
+            print('user_id = '+str(user.id))
+            # check if user already has reset their password, so they will update the current key instead of generating a seperate entry in the table.
+            if db.session.query(models.PWReset).filter_by(user_id = user.id).first():
+               pwalready = (db.session.query(models.PWReset).filter_by(user_id = user.id).first())
+               #print('user_id = '+str(models.PWReset.user_id.user_id))
+            # if the key hasn't been used yet, just send the same key.
+               if pwalready.has_activated == False:
+                    print('Password has NOT been activated')
+                    pwalready.datetime = datetime.now(pytz.utc)
+                    key = pwalready.reset_key
+               else:
+                    print('Password HAS been activated')
+                    key = keygenerator.make_key()
+                    pwalready.reset_key = key
+                    pwalready.datetime = datetime.now(pytz.utc)
+                    pwalready.has_activated = False
+            else:
+                key = keygenerator.make_key()
+                user_reset = models.PWReset(reset_key=key, user_id=user.id)
+                db.session.add(user_reset)
+            db.session.commit()
+            flash('Please check your email for further intructions.')
+        else:
+           flash("The email provided was never registered.")
+    return render_template('pwresetrq.html',title='Password Reset')
+
+@app.route('/pwreset', methods=['GET','POST'])
+def pwreset():
+    if request.method == 'POST':
+        pass
 
 @app.route('/logout')
 @login_required
@@ -79,12 +106,10 @@ def logout():
     flash('You were logged out.')
     return redirect (url_for('login'))
 
+
 @app.route('/register', methods=['GET','POST'])
 def register():
     if request.method == 'POST':
-        # if request.form['email'] == '':
-        #     flash("Please enter your email address")
-        #     return redirect(request.url)
         if not request.form['password'] or not request.form['password2']:
             flash('Please enter and confirm a password')
             return redirect(request.url)
@@ -108,6 +133,7 @@ def register():
         flash('User successfully registered')
         return redirect(url_for('player'))
     return render_template('register.html',title='Register')
+
 
 @app.route('/player')
 @login_required

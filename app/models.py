@@ -88,3 +88,11 @@ class Bookmark(db.Model):
 
     def __repr__(self):
         return "<Bookmark(desc='%s', time='%s', book_id='%s', user_id='%s')>" % (self.desc, self.time,self.book_id,self.user_id)
+
+class PWReset(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    reset_key = db.Column(db.String(128), unique=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    datetime = db.Column(db.DateTime(timezone=True), default=datetime.datetime.now)
+    user = db.relationship(User, lazy='joined')
+    has_activated = db.Column(db.Boolean, default=False)
