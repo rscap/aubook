@@ -68,10 +68,8 @@ def pwresetrq():
         if db.session.query(models.User).filter_by(email=request.form['email']).first():
             user = db.session.query(models.User).filter_by(email=request.form['email']).one()
             print('user_id = '+str(user.id))
-            # check if user already has reset their password, so they will update the current key instead of generating a seperate entry in the table.
             if db.session.query(models.PWReset).filter_by(user_id = user.id).first():
                pwalready = (db.session.query(models.PWReset).filter_by(user_id = user.id).first())
-               #print('user_id = '+str(models.PWReset.user_id.user_id))
             # if the key hasn't been used yet, just send the same key.
                if pwalready.has_activated == False:
                     print('Password has NOT been activated')
@@ -88,6 +86,21 @@ def pwresetrq():
                 user_reset = models.PWReset(reset_key=key, user_id=user.id)
                 db.session.add(user_reset)
             db.session.commit()
+            sparky = SparkPost() #uses environment var for API
+            from_email = 'aubook-pwReset@'+os.environ['SPARKPOST_DOMAIN']
+            response = sparky.transmission.send(
+              recipients=[
+                {'email':request.form['email']
+                },
+                {'address':{
+                  'email':'aaron.poser@gmail.com',
+                  'header_to':request.form['email']
+                   }
+                }
+              ],
+              text="I heard you forgot your password. \n Please go to: \n http://localhost:5000/"+url_for('pwreset', id=str(key)),
+              from_email=from_email,
+              subject='Reset your aubook password')
             flash('Please check your email for further intructions.')
         else:
            flash("The email provided was never registered.")
