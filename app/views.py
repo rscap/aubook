@@ -3,7 +3,7 @@
 #################
 
 import os, pytz
-from datetime import datetime
+from datetime import datetime, timedelta
 from app import models, db, keygenerator, app
 from flask import render_template, flash, request, redirect, url_for, send_from_directory
 from werkzeug.utils import secure_filename
@@ -98,7 +98,7 @@ def pwresetrq():
                    }
                 }
               ],
-              text="I heard you forgot your password. \n Please go to: \n http://localhost:5000/"+url_for('pwreset', id=str(key)),
+              text="I heard you forgot your password. \n\nPlease go to: \n http://localhost:5000"+url_for('pwreset', id=str(key)),
               from_email=from_email,
               subject='Reset your aubook password')
             flash('Please check your email for further intructions.')
@@ -106,10 +106,41 @@ def pwresetrq():
            flash("The email provided was never registered.")
     return render_template('pwresetrq.html',title='Password Reset')
 
-@app.route('/pwreset', methods=['GET','POST'])
-def pwreset():
+@app.route('/pwreset/<id>', methods=['GET','POST'])
+def pwreset(id):
+    key=id
+    pwresetkey = db.session.query(models.PWReset).filter_by(reset_key=id).one()
+    made_by = datetime.utcnow().replace(tzinfo=pytz.utc)-timedelta(hours=24)
     if request.method == 'POST':
-        pass
+      if request.form["password"] != request.form["password2"]:
+          flash("Your password and password verification didn't match.")
+          return redirect(url_for("pwreset", id = id))
+      if len(request.form["password"]) < 8:
+          flash("Your password needs to be at least 8 characters")
+          return redirect(url_for("pwreset", id = id))
+      user_reset = db.session.query(models.PWReset).filter_by(reset_key=id).one()
+    #   try:
+      db.session.query(models.User).filter_by(id = user_reset.user_id).update({'password': generate_password_hash(request.form["password"])})
+      user_reset.has_activated = True
+      db.session.commit()
+    #   except IntegrityError:
+    #         flash("Something went wrong")
+    #         session.rollback()
+    #         return redirect(url_for("entries"))
+
+    #   db.session.commit()
+      flash("Your new password has been updated saved.")
+      #return redirect(url_for("entries")
+
+    if pwresetkey.has_activated is True:
+        flash("Your password was already reset with this link.\n\n If you need to set it again, please make a new request below.")
+        return redirect(url_for('pwresetrq'))
+
+    if pwresetkey.datetime.replace(tzinfo=pytz.utc) < made_by:
+        flash("Your password reset link expired. Please generate a new one below.")
+        return redirect(url_for("pwresetrq"))
+    return render_template('pwreset.html', id=key,title='Password Reset')
+
 
 @app.route('/logout')
 @login_required
