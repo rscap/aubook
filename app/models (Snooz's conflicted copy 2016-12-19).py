@@ -1,5 +1,14 @@
 from app import db
 import datetime
+#from sqlalchemy import ForeignKey
+#from sqlalchemy.orm import relationship
+
+# BookUser = db.Table('bookUsers',
+#   db.Column('id', db.Integer, primary_key=True),
+#   db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+#   db.Column('book_id', db.Integer, db.ForeignKey('book.id')),
+#   db.Column('currentTime', db.Float)
+# )
 
 class BookUser(db.Model):
     __tablename__ = 'book_users'
@@ -12,9 +21,9 @@ class BookUser(db.Model):
 class User(db.Model):
     #__tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False)
+    name = db.Column(db.String(50))
     email = db.Column(db.String(120), unique=True)
-    password = db.Column(db.String(120), nullable=False)
+    password = db.Column(db.String(120))
     #books = db.relationship('Book', secondary=BookUser, backref=db.backref('books')) #, lazy='dynamic')
     books = db.relationship('Book', secondary='book_users', backref=db.backref('books')) #, lazy='dynamic')
 
@@ -47,9 +56,10 @@ class User(db.Model):
 class Book(db.Model):
     #__tablename__ = 'book'
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(120), nullable=False)
-    author = db.Column(db.String(120), nullable=False)
-    shareable = db.Column(db.Boolean, nullable=False)
+    title = db.Column(db.String(120))
+    author = db.Column(db.String(120))
+    path = db.Column(db.String(120),unique=True)
+    share = db.Column(db.Boolean, nullable=False)
     #curretTime = Column(String(10))
     #user_id = Column(Integer, ForeignKey(User.id))
     #user = relationship("User" secondary=BookUser, backref='users')

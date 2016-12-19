@@ -1,0 +1,20 @@
+<!-- extned from base layout -->
+{% extends "layout.html" %}
+
+{% block body %}
+<title>Audiobook Library</title>
+  <h1>Available Books:</h1>
+  {% if booklist %}
+   <form action="" method="POST">
+     {% for book in booklist %}
+       <p><input type='checkbox' name='book' value={{ book.id }}>  {{ book.author }}, {{ book.title }}
+     {% endfor %}
+     <p><button class="w3-btn w3-blue" type="checkout" >Submit</button>
+  {% else %}
+     No Books in the library
+  {% endif %}
+
+
+
+
+{% endblock %}

@@ -1,0 +1,79 @@
+<!-- extned from base layout -->
+{% extends "layout.html" %}
+
+{% block body %}
+  <title>Audiobook Player</title>
+    <h1>Play on player</h1>
+
+    {% if booktitle %}
+    <h3>{{ booktitle }}</h3>
+    {% else %}
+    <h3 id='currentPlaying'>No Title Present</h3>
+    {% endif %}
+
+    <audio width:"100%"; onclick="play(this)" id='audio' controls="true">
+      <source src="static/audio/foo/foo.mp3" >
+      Your browser does not support the audio element.
+    </audio>
+
+    <div>
+      <ul style="list-style-type:none">
+      {% for book in booklist %}
+          <li id='book'><a href="javascript:void(0);">{{ book.title }}</a></li>
+      {% endfor %}
+      </ul>
+    </div>
+
+    <script type='text/javascript'>
+
+    document.body.onkeypress = function(e){
+      if(e.keyCode == 32){
+        console.log('space bar pressed')
+        if (aud.paused) {
+          console.log('status is paused')
+          console.log('playing')
+          aud.play()
+        } else {
+          console.log('pausing')
+          aud.pause()
+        }
+      }
+    }
+    console.log('start!')
+    var aud = document.getElementById('audio')
+    console.log('aud.paused state: '+aud.paused)
+    //console.log('aud = '+aud)
+    aud.addEventListener('pause', getTime)
+    // jQuery $('#aud').on('pause', getTime)
+    function getTime (){
+      console.log('current time = '+aud.currentTime)
+    }
+
+      // {% for book in booklist %}
+      //    $('li').click(function(){
+      //      var str = $(this).text()
+      //      //console.log(str)
+      //      $('audio').attr('src', '/static/audio/'+str);
+      //    });
+      // {% endfor %}
+
+
+    var get_li = function() {
+      //get the LI tags
+      var tags_li = document.getElementsByTagName('li');
+      var nr_li = tags_li.length;
+      // traverse the "tags_li" array
+      for (i=0; i<nr_li; i++) {
+        // apply the 'onclick' event to each, assigning a function that must be called by this event
+        tags_li[i].onclick = function() {
+          var continut = this.textContent || this.innerText; // gets the content
+          // console.log('continut: '+continut);
+          document.getElementById('audio').setAttribute('src', '/static/audio/'+continut);
+          document.getElementById('currentPlaying').innerHTML = continut;
+        };
+      }
+    };
+    window.onload = get_li;
+    </script>
+
+{% endblock %}
