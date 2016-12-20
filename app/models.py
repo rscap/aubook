@@ -54,13 +54,14 @@ class Book(db.Model):
     #user_id = Column(Integer, ForeignKey(User.id))
     #user = relationship("User" secondary=BookUser, backref='users')
 
-    def __init__(self, title=None, author=None):
-        self.title = title
-        self.author = author
-        #self.user_id = user_id
+    # def __init__(self, title=None, author=None, shareable=True):
+    #     self.title = title
+    #     self.author = author
+    #     self.sharable = shareable
+    #     #self.user_id = user_id
 
-    def __repr__(self):
-        return "<Book(title='%s', author='%s')>" % (self.title, self.author)
+    # def __repr__(self):
+    #     return "<Book(title='%s', author='%s')>" % (self.title, self.author, self.shareable)
 
 class Bookmark(db.Model):
     __tablename__ = 'bookmarks'
