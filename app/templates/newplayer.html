@@ -18,9 +18,14 @@
 
     <div>
       <ul style="list-style-type:none">
-      {% for book in booklist %}
-          <li id='book'><a href="javascript:void(0);">{{ book.title }}</a></li>
-      {% endfor %}
+      {% if booklist|length > 0 %}
+        {% for book in booklist %}
+            <li id='book'><a href="javascript:void(0);">{{ book.title }}</a></li>
+        {% endfor %}
+      {% else %}
+         You have no Books in the checked out<br/>
+         Head over to the <a href="{{ url_for('library')}}">Library<a>
+      {% endif %}
       </ul>
     </div>
 

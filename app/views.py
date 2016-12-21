@@ -293,7 +293,9 @@ def upload():
             flash('Please enter a title of the book that is to be uploaded')
             return redirect(request.url)
         newfolder_id = db.session.query(db.func.max(models.Book.id)).scalar() # latest id
+
         # print('newfolder_id = '+str(newfolder_id))
+        newfolder_id = int(newfolder_id or 0 ) + 1
         dir = UPLOAD_FOLDER+'/'+str(newfolder_id)
         # print('dir = '+str(dir))
         uploaded_files = request.files.getlist("file")
