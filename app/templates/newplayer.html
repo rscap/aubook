@@ -72,13 +72,13 @@
       for (i=0; i<nr_li; i++) {
         // apply the 'onclick' event to each, assigning a function that must be called by this event
         tags_li[i].onclick = function() {
-          var continut = '/'+this.id+'/'+this.textContent || this.innerText +'.mp3'; // gets the content
+          // var continut = '/'+this.id+'/'+this.textContent || this.innerText +'.mp3'; // gets the content
           var continut = '/'+this.id+'/'+this.textContent+'.mp3'; // gets the content
-          console.log('continut: '+continut);
-          console.log('this.textContent = '+this.textContent)
-          console.log('this.innerText = '+this.innerText)
+          // console.log('continut: '+continut);
+          // console.log('this.textContent = '+this.textContent)
+          // console.log('this.innerText = '+this.innerText)
           document.getElementById('audio').setAttribute('src', '/audio'+continut);
-          document.getElementById('currentPlaying').innerHTML = continut;
+          document.getElementById('currentPlaying').innerHTML = this.textContent;
         };
       }
     };
