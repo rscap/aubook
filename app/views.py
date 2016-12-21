@@ -286,6 +286,7 @@ def hello(path):
 @app.route("/upload", methods=['GET','POST'])
 @login_required
 def upload():
+    g.user = current_user
     filenames = []
     if request.method == 'POST':
         if request.form['title'] == '':
@@ -325,6 +326,7 @@ def upload():
         a = concatAudio(dir,request.form['title'])
         a.concat()
         newBook = models.Book(title=request.form['title'],author=request.form['author'],shareable=shareable)
+        current_user.books.append(newBook)
         db.session.add(newBook)
         db.session.commit()
     return render_template('upload.html', filenames=filenames, title='all the new files')
