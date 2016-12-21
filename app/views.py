@@ -242,12 +242,12 @@ def newplayer():
     currently_checkedout_books = []
     g.user=current_user
     checkedout_books_by_user = db.session.query(models.BookUser).filter_by(user_id = current_user.id).all()
-    for e in checkedout_books_by_user:
-        print('e.book_id = '+str(e.book_id))
+    # for e in checkedout_books_by_user:
+    #     print('e.book_id = '+str(e.book_id))
     for entry in checkedout_books_by_user:
         book = db.session.query(models.Book).filter_by(id = entry.book_id).one()
-        print(type(book))
-        print(book)
+        # print(type(book))
+        # print(book)
         #     print(book.id)
         #     print(book.title)
         currently_checkedout_books.append(book)
@@ -270,16 +270,23 @@ def newplayer():
     #     print(folder)
     # return render_template('player.html',title='player',thing=a)
     #return render_template('player.html',title='player',booklist=booklist,bookDirs=bookDirs)
-    return render_template('playernew.html',title='player NEW',booklist=currently_checkedout_books)
+    return render_template('newplayer.html',title='player NEW',booklist=currently_checkedout_books)
 
 
+
+# @app.route('/audio/<path:path>')
+# @login_required
+# def hello(path):
+#     print('path = '+path)
+#     return send_from_directory('audio', path)
 
 @app.route('/audio/<path:path>')
 @login_required
-def hello(path):
+def serve_audio(path):
     print('path = '+path)
-    return send_from_directory('audio', path)
-
+    dir = 'static/audio'
+    return send_from_directory(dir, path)
+    # return 'hi'
 
 
 

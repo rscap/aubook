@@ -68,7 +68,7 @@
         tags_li[i].onclick = function() {
           var continut = this.textContent || this.innerText; // gets the content
           // console.log('continut: '+continut);
-          document.getElementById('audio').setAttribute('src', '/static/audio/'+continut);
+          document.getElementById('audio').setAttribute('src', '/audio/'+continut);
           document.getElementById('currentPlaying').innerHTML = continut;
         };
       }

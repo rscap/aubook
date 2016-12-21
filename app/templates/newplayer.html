@@ -12,7 +12,8 @@
     {% endif %}
 
     <audio width:"100%"; onclick="play(this)" id='audio' controls="true">
-      <source src="static/audio/foo/foo.mp3" >
+      <!-- <source src="static/audio/foo/foo.mp3" > -->
+      <source src="" >
       Your browser does not support the audio element.
     </audio>
 
@@ -20,7 +21,7 @@
       <ul style="list-style-type:none">
       {% if booklist|length > 0 %}
         {% for book in booklist %}
-            <li id='book'><a href="javascript:void(0);">{{ book.title }}</a></li>
+            <li id={{ book.id }}><a href="javascript:void(0);">{{ book.title }}</a></li>
         {% endfor %}
       {% else %}
          You have no Books in the checked out<br/>
@@ -71,9 +72,12 @@
       for (i=0; i<nr_li; i++) {
         // apply the 'onclick' event to each, assigning a function that must be called by this event
         tags_li[i].onclick = function() {
-          var continut = this.textContent || this.innerText; // gets the content
-          // console.log('continut: '+continut);
-          document.getElementById('audio').setAttribute('src', '/static/audio/'+continut);
+          var continut = '/'+this.id+'/'+this.textContent || this.innerText +'.mp3'; // gets the content
+          var continut = '/'+this.id+'/'+this.textContent+'.mp3'; // gets the content
+          console.log('continut: '+continut);
+          console.log('this.textContent = '+this.textContent)
+          console.log('this.innerText = '+this.innerText)
+          document.getElementById('audio').setAttribute('src', '/audio'+continut);
           document.getElementById('currentPlaying').innerHTML = continut;
         };
       }
