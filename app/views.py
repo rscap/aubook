@@ -245,7 +245,7 @@ def serve_audio(path):
 def posttime(m):
     g.user = current_user
     print('post time')
-    print('currentTime = '+m)
+    print('Post = '+m)
     # goal is to update BookUser table with new time entry for current_user and book_id
 
     return ('')

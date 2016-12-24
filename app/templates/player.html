@@ -111,14 +111,15 @@
     //       console.log('curretTime = '+aud.currentTime)
     // }
 
-    m = aud.currentTime
+    console.log(what)
     $('Button').click(
       function testPost() {
         console.log('current playing id = '+current_playing_id)
         var req = new XMLHttpRequest();
-        req.open("POST","/postTime/"+m+'&'+'current_playing_id='+current_playing_id)
+        req.open("POST","/postTime/time="+aud.currentTime+'&'+'current_playing_id='+current_playing_id)
         req.send(m)
-        console.log('m = '+m)
+        //console.log('time = '+m)
+        console.log('aud.currentTime = '+aud.currentTime)
         console.log(req.status, req.statusText);
         console.log('req.getResponseHeader(content-type) = '+req.getResponseHeader('content-type'))
     });
