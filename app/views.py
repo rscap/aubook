@@ -174,6 +174,7 @@ def register():
         return redirect(url_for('player'))
     return render_template('register.html',title='Register')
 
+
 @app.route('/library', methods=['GET','POST'])
 @login_required
 def library():
@@ -212,82 +213,39 @@ def library():
 
 @app.route('/player')
 @login_required
-def player():
-    books = {}
-    booklist = []
-    bookDirs = []
-    print(UPLOAD_FOLDER)
-    dirs = os.listdir(UPLOAD_FOLDER)
-    print('dirs = '+str(dirs))
-    for dir in dirs:
-        if dir[:1] != '.' and dir[-4:] != '.mp3':
-            bookDir = UPLOAD_FOLDER+'/'+dir
-            print('bookDir = '+str(bookDir))
-            p = os.listdir(bookDir)
-            print('p = '+str(p))
-            for i in p:
-                if i.endswith('.mp3'):
-                    booklist.append(i)
-            print('booklist = '+str(booklist))
-
-    # for folder in UPLOAD_FOLDER:
-    #     print(folder)
-    # return render_template('player.html',title='player',thing=a)
-    return render_template('player.html',title='player',booklist=booklist,bookDirs=bookDirs)
-
-@app.route('/newplayer')
-@login_required
 def newplayer():
-    print('new player route')
     currently_checkedout_books = []
     g.user=current_user
     checkedout_books_by_user = db.session.query(models.BookUser).filter_by(user_id = current_user.id).all()
-    # for e in checkedout_books_by_user:
-    #     print('e.book_id = '+str(e.book_id))
+    for e in checkedout_books_by_user:
+        print('e.book_id = '+str(e.book_id))
     for entry in checkedout_books_by_user:
         book = db.session.query(models.Book).filter_by(id = entry.book_id).one()
-        # print(type(book))
-        # print(book)
-        #     print(book.id)
-        #     print(book.title)
+        print(type(book))
+        print(book)
+            # print(book.id)
+            # print(book.title)
         currently_checkedout_books.append(book)
-
-    #print(UPLOAD_FOLDER)
-    # dirs = os.listdir(UPLOAD_FOLDER)
-    #print('dirs = '+str(dirs))
-    # for dir in dirs:
-    #     if dir[:1] != '.' and dir[-4:] != '.mp3':
-    #         bookDir = UPLOAD_FOLDER+'/'+dir
-    #         print('bookDir = '+str(bookDir))
-    #         p = os.listdir(bookDir)
-    #         print('p = '+str(p))
-    #         for i in p:
-    #             if i.endswith('.mp3'):
-    #                 booklist.append(i)
-    #         print('booklist = '+str(booklist))
-
-    # for folder in UPLOAD_FOLDER:
-    #     print(folder)
-    # return render_template('player.html',title='player',thing=a)
-    #return render_template('player.html',title='player',booklist=booklist,bookDirs=bookDirs)
-    return render_template('newplayer.html',title='player NEW',booklist=currently_checkedout_books)
+    return render_template('player.html',title='player NEW',booklist=currently_checkedout_books)
 
 
 
-# @app.route('/audio/<path:path>')
-# @login_required
-# def hello(path):
-#     print('path = '+path)
-#     return send_from_directory('audio', path)
 
 @app.route('/audio/<path:path>')
 @login_required
 def serve_audio(path):
-    print('path = '+path)
+    # print('path = '+path)
     dir = 'static/audio'
     return send_from_directory(dir, path)
-    # return 'hi'
 
+
+@app.route('/postTime/<m>', methods=['POST'])
+@login_required
+def posttime(m):
+    print('post time')
+    print('currentTime = '+m)
+    return ('')
+    # return render_template('placeholder.html')
 
 
 @app.route("/upload", methods=['GET','POST'])

@@ -12,19 +12,59 @@
     {% endif %}
 
     <audio width:"100%"; onclick="play(this)" id='audio' controls="true">
-      <source src="static/audio/foo/foo.mp3" >
+      <!-- <source src="static/audio/foo/foo.mp3" > -->
+      <source src="" >
       Your browser does not support the audio element.
     </audio>
 
     <div>
       <ul style="list-style-type:none">
-      {% for book in booklist %}
-          <li id='book'><a href="javascript:void(0);">{{book}}</a></li>
-      {% endfor %}
+      {% if booklist|length > 0 %}
+        {% for book in booklist %}
+            <li id={{ book.id }}><a href="javascript:void(0);">{{ book.title }}</a></li>
+        {% endfor %}
+      {% else %}
+         You have no Books in the checked out<br/>
+         Head over to the <a href="{{ url_for('library')}}">Library<a>
+      {% endif %}
       </ul>
     </div>
 
+    <button id='a' class="w3-btn w3-blue">POST TEST</BUTTON>
+
+
     <script type='text/javascript'>
+
+
+
+    var get_li = function() {
+      //get the LI tags
+      var tags_li = document.getElementsByTagName('li');
+      var nr_li = tags_li.length;
+      // traverse the "tags_li" array
+      for (i=0; i<nr_li; i++) {
+        // apply the 'onclick' event to each, assigning a function that must be called by this event
+        tags_li[i].onclick = function() {
+          // var continut = '/'+this.id+'/'+this.textContent || this.innerText +'.mp3'; // gets the content
+          var continut = '/'+this.id+'/'+this.textContent+'.mp3'; // gets the content
+          console.log(continut)
+          document.getElementById('audio').setAttribute('src', '/audio'+continut);
+          document.getElementById('currentPlaying').innerHTML = this.textContent;
+        };
+      }
+    };
+
+
+    console.log('start!')
+    var aud = document.getElementById('audio')
+    console.log('aud.paused state: '+aud.paused)
+    //console.log('aud = '+aud)
+    aud.addEventListener('pause', getTime)
+    // jQuery $('#aud').on('pause', getTime)
+    function getTime (){
+      console.log('current time = '+aud.currentTime)
+    }
+
 
     document.body.onkeypress = function(e){
       if(e.keyCode == 32){
@@ -39,40 +79,46 @@
         }
       }
     }
-    console.log('start!')
-    var aud = document.getElementById('audio')
-    console.log('aud.paused state: '+aud.paused)
-    //console.log('aud = '+aud)
-    aud.addEventListener('pause', getTime)
-    // jQuery $('#aud').on('pause', getTime)
-    function getTime (){
-      console.log('current time = '+aud.currentTime)
-    }
 
+
+
+      // jQuery version of javascript below (mostly)
       // {% for book in booklist %}
       //    $('li').click(function(){
       //      var str = $(this).text()
       //      //console.log(str)
-      //      $('audio').attr('src', '/static/audio/'+str);
+      //      $('audio').attr('src', '/audio/'+str);
+      //      $('currentPlaying').innerHTML = this.textContent;
       //    });
       // {% endfor %}
 
 
-    var get_li = function() {
-      //get the LI tags
-      var tags_li = document.getElementsByTagName('li');
-      var nr_li = tags_li.length;
-      // traverse the "tags_li" array
-      for (i=0; i<nr_li; i++) {
-        // apply the 'onclick' event to each, assigning a function that must be called by this event
-        tags_li[i].onclick = function() {
-          var continut = this.textContent || this.innerText; // gets the content
-          // console.log('continut: '+continut);
-          document.getElementById('audio').setAttribute('src', '/audio/'+continut);
-          document.getElementById('currentPlaying').innerHTML = continut;
-        };
-      }
-    };
+
+
+    // jQuery for timed events
+    // $(document).ready(function(){
+    //   console.log('ready!');
+    //   //i=0;
+    //   setInterval(hey, 1000);
+    // });
+
+    // function hey(){
+    //       //i++
+    //       console.log('Hey! seconds has gone by.')
+    //       console.log('curretTime = '+aud.currentTime)
+    // }
+
+    m = aud.currentTime
+    $('Button').click(
+      function testPost() {
+        var req = new XMLHttpRequest();
+        req.open("POST","/postTime/"+m)
+        req.send(m)
+        console.log('m = '+m)
+        console.log(req.status, req.statusText);
+        console.log('req.getResponseHeader(content-type) = '+req.getResponseHeader('content-type'))
+    });
+
     window.onload = get_li;
     </script>
 
