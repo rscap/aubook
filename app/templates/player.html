@@ -33,9 +33,11 @@
     <button id='a' class="w3-btn w3-blue">POST TEST</BUTTON>
 
 
+
+
+
     <script type='text/javascript'>
-
-
+    current_playing_id = null
 
     var get_li = function() {
       //get the LI tags
@@ -48,6 +50,7 @@
           // var continut = '/'+this.id+'/'+this.textContent || this.innerText +'.mp3'; // gets the content
           var continut = '/'+this.id+'/'+this.textContent+'.mp3'; // gets the content
           console.log(continut)
+          current_playing_id = this.id
           document.getElementById('audio').setAttribute('src', '/audio'+continut);
           document.getElementById('currentPlaying').innerHTML = this.textContent;
         };
@@ -111,8 +114,9 @@
     m = aud.currentTime
     $('Button').click(
       function testPost() {
+        console.log('current playing id = '+current_playing_id)
         var req = new XMLHttpRequest();
-        req.open("POST","/postTime/"+m)
+        req.open("POST","/postTime/"+m+'&'+'current_playing_id='+current_playing_id)
         req.send(m)
         console.log('m = '+m)
         console.log(req.status, req.statusText);

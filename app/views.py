@@ -219,14 +219,15 @@ def newplayer():
     checkedout_books_by_user = db.session.query(models.BookUser).filter_by(user_id = current_user.id).all()
     for e in checkedout_books_by_user:
         print('e.book_id = '+str(e.book_id))
+    print('\n')
     for entry in checkedout_books_by_user:
         book = db.session.query(models.Book).filter_by(id = entry.book_id).one()
-        print(type(book))
-        print(book)
-            # print(book.id)
-            # print(book.title)
+        print('book type = '+str(type(book)))
+        print('book object = '+str(book))
+        print(book.id)
+        print(book.title)
         currently_checkedout_books.append(book)
-    return render_template('player.html',title='player NEW',booklist=currently_checkedout_books)
+    return render_template('player.html',title='player NEW',booklist=currently_checkedout_books,bookInfo=checkedout_books_by_user)
 
 
 
@@ -242,8 +243,11 @@ def serve_audio(path):
 @app.route('/postTime/<m>', methods=['POST'])
 @login_required
 def posttime(m):
+    g.user = current_user
     print('post time')
     print('currentTime = '+m)
+    # goal is to update BookUser table with new time entry for current_user and book_id
+
     return ('')
     # return render_template('placeholder.html')
 
