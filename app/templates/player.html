@@ -37,6 +37,7 @@
 
 
     <script type='text/javascript'>
+     $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
     current_playing_id = null
 
     var get_li = function() {
@@ -62,9 +63,9 @@
     var aud = document.getElementById('audio')
     console.log('aud.paused state: '+aud.paused)
     //console.log('aud = '+aud)
-    aud.addEventListener('pause', getTime)
+    aud.addEventListener('pause', printTime)
     // jQuery $('#aud').on('pause', getTime)
-    function getTime (){
+    function printTime (){
       console.log('current time = '+aud.currentTime)
     }
 
@@ -85,15 +86,15 @@
 
 
 
-      // jQuery version of javascript below (mostly)
-      // {% for book in booklist %}
-      //    $('li').click(function(){
-      //      var str = $(this).text()
-      //      //console.log(str)
-      //      $('audio').attr('src', '/audio/'+str);
-      //      $('currentPlaying').innerHTML = this.textContent;
-      //    });
-      // {% endfor %}
+    // jQuery version of javascript below (mostly)
+    // {% for book in booklist %}
+    //    $('li').click(function(){
+    //      var str = $(this).text()
+    //      //console.log(str)
+    //      $('audio').attr('src', '/audio/'+str);
+    //      $('currentPlaying').innerHTML = this.textContent;
+    //    });
+    // {% endfor %}
 
 
 
@@ -111,18 +112,58 @@
     //       console.log('curretTime = '+aud.currentTime)
     // }
 
-    console.log(what)
-    $('Button').click(
-      function testPost() {
-        console.log('current playing id = '+current_playing_id)
-        var req = new XMLHttpRequest();
-        req.open("POST","/postTime/time="+aud.currentTime+'&'+'current_playing_id='+current_playing_id)
-        req.send(m)
-        //console.log('time = '+m)
-        console.log('aud.currentTime = '+aud.currentTime)
-        console.log(req.status, req.statusText);
-        console.log('req.getResponseHeader(content-type) = '+req.getResponseHeader('content-type'))
-    });
+    // m = aud.currentTime;
+    // n = "/postTime/?time="+aud.currentTime+'&'+'current_playing_id='+current_playing_id
+    // nn = "/postTime/time="+aud.currentTime+'&'+'current_playing_id='+current_playing_id
+    // what = typeof m;
+    // console.log(what)
+    // $('Button').click(
+    //   function testPost() {
+    //     console.log('current playing id = '+current_playing_id)
+    //     var req = new XMLHttpRequest();
+    //     req.open("POST",nn)
+    //     //req.send(n)
+    //     req.send()
+    //     //console.log('time = '+m)
+    //     console.log('aud.currentTime = '+aud.currentTime)
+    //     console.log(req.status, req.statusText);
+    //     console.log('req.getResponseHeader(content-type) = '+req.getResponseHeader('content-type'))
+    // });
+
+    var http = new XMLHttpRequest();
+    var url = "/postTime";
+    http.open("POST",url,true);
+    //Send the proper header information along with the request
+    http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+    //http.onreadystatechange = function() {//Call a function when the state changes.
+    document.getElementById('audio').onpause = function() {
+    //if(http.readyState == 4 && http.status == 200) {
+        // alert(http.responseText);
+        var params = "currentTime="+aud.currentTime+'&id='+current_playing_id;
+
+        console.log('*************** in onpause function ***********');
+        console.log('params in send = '+params);
+        http.open("POST",url,true);
+        //http.setRequestHeader("Content-type","application/json;charset=UTF-8")
+        //http.send(JSON.stringify({id:current_playing_id,currentTime:aud.currentTime}));
+        http.setRequestHeader('Content-type','application/x-www-form-urlencoded')
+        http.send(params);
+        // http.send({'id':'somenumber','time':'sometime'})
+        }
+    // uncomment onready state for below to work:
+    // else {
+    //   console.log('Not ready')
+    // }
+    //}
+
+    // $.ajax({
+    //   type: 'POST',
+    //   url: '/postTime',
+    //   data: JSON.stringify({'id':current_playing_id, 'time':aud.currentTime}, null, '\t'),
+    //   contentType: 'application/json;charset=UTF-8'
+    // });
+
 
     window.onload = get_li;
     </script>

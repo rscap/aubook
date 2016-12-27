@@ -5,7 +5,7 @@
 import os, pytz
 from datetime import datetime, timedelta
 from app import models, db, keygenerator, app
-from flask import render_template, flash, request, redirect, url_for, send_from_directory, g
+from flask import render_template, flash, request, redirect, url_for, jsonify, send_from_directory, g
 from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash, generate_password_hash
 from mp3concat import concatAudio
@@ -217,15 +217,15 @@ def newplayer():
     currently_checkedout_books = []
     g.user=current_user
     checkedout_books_by_user = db.session.query(models.BookUser).filter_by(user_id = current_user.id).all()
-    for e in checkedout_books_by_user:
-        print('e.book_id = '+str(e.book_id))
+    # for e in checkedout_books_by_user:
+    #     print('e.book_id = '+str(e.book_id))
     print('\n')
     for entry in checkedout_books_by_user:
         book = db.session.query(models.Book).filter_by(id = entry.book_id).one()
-        print('book type = '+str(type(book)))
-        print('book object = '+str(book))
-        print(book.id)
-        print(book.title)
+        # print('book type = '+str(type(book)))
+        # print('book object = '+str(book))
+        # print(book.id)
+        # print(book.title)
         currently_checkedout_books.append(book)
     return render_template('player.html',title='player NEW',booklist=currently_checkedout_books,bookInfo=checkedout_books_by_user)
 
@@ -240,14 +240,44 @@ def serve_audio(path):
     return send_from_directory(dir, path)
 
 
-@app.route('/postTime/<m>', methods=['POST'])
-@login_required
-def posttime(m):
-    g.user = current_user
-    print('post time')
-    print('Post = '+m)
-    # goal is to update BookUser table with new time entry for current_user and book_id
+# @app.route('/postTime/<n>', methods=['POST'])
+# @login_required
+# def posttime(n):
+#     g.user = current_user
+#     print('post time')
+#     print('Post = '+n)
+#     # q = request.arg.get('time')
+#     # print(q)
+#     # goal is to update BookUser table with new time entry for current_user and book_id
+#     return ('')
+#     # return render_template('placeholder.html')
 
+
+@app.route('/postTime', methods=['GET','POST'])
+@login_required
+def posttime():
+    g.user = current_user
+    if request.method == 'GET':
+        print('request.query_string = '+request.query_string)
+        print('request.data = '+request.data)
+    if request.method == 'POST':
+        print('request.url = '+request.url)
+        print('request.query_string = '+request.query_string)
+        print('request.data = '+request.data)
+        print('id = '+str(request.form['id']))
+        print('currentTime = '+str(request.form['currentTime']))
+        # print('request.values[\'id\'] = '+str(request.values['id']))
+        # print('request.values[\'currentTime\'] = '+str(request.values['currentTime']))
+        # print('id = '+str(request.args.get('id')))
+        print('currentTime = '+str(request.args.get('time')))
+        print('request.view_args = '+str(request.view_args))
+        print('request.get_json = '+str(request.get_json))
+        print('request.is_json = '+str(request.is_json))
+        print('request.json = '+str(request.json))
+        # print('request.json[\'id\'] = '+request.json['id'])
+        # print('request.json[\'currentTime\'] = '+str(request.json['currentTime']))
+        # print('request.is_xhr = '+str(request.is_xhr))
+        # goal is to update BookUser table with new time entry for current_user and book_id
     return ('')
     # return render_template('placeholder.html')
 
