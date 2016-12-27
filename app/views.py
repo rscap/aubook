@@ -261,23 +261,26 @@ def posttime():
         print('request.query_string = '+request.query_string)
         print('request.data = '+request.data)
     if request.method == 'POST':
-        print('request.url = '+request.url)
-        print('request.query_string = '+request.query_string)
-        print('request.data = '+request.data)
-        print('id = '+str(request.form['id']))
+        # print('request.url = '+request.url) # returns no data
+        # print('request.query_string = '+request.query_string) # returns no data
+        # print('request.data = '+request.data) # returns no data
+        print('id = '+str(request.form['book_id']))
         print('currentTime = '+str(request.form['currentTime']))
-        # print('request.values[\'id\'] = '+str(request.values['id']))
-        # print('request.values[\'currentTime\'] = '+str(request.values['currentTime']))
-        # print('id = '+str(request.args.get('id')))
-        print('currentTime = '+str(request.args.get('time')))
-        print('request.view_args = '+str(request.view_args))
-        print('request.get_json = '+str(request.get_json))
-        print('request.is_json = '+str(request.is_json))
-        print('request.json = '+str(request.json))
+        # print('request.values[\'id\'] = '+str(request.values['id'])) # returns data when charset = application/json;charset=UTF-8
+        # print('request.values[\'currentTime\'] = '+str(request.values['currentTime'])) # returns data when charset = application/json;charset=UTF-8
+        # print('id = '+str(request.args.get('id'))) # returns data when charset = application/json;charset=UTF-8
         # print('request.json[\'id\'] = '+request.json['id'])
         # print('request.json[\'currentTime\'] = '+str(request.json['currentTime']))
+        # print('currentTime = '+str(request.args.get('time'))) # returns no data
+        # print('request.view_args = '+str(request.view_args))  # returns no data
+        # print('request.get_json = '+str(request.get_json))
+        # print('request.is_json = '+str(request.is_json))
+        # print('request.json = '+str(request.json))
         # print('request.is_xhr = '+str(request.is_xhr))
         # goal is to update BookUser table with new time entry for current_user and book_id
+        currentBook = db.session.query(models.BookUser).filter_by(user_id = current_user.id, book_id = request.form['book_id']).one()
+        currentBook.currentTime = request.form['currentTime']
+        db.session.commit()
     return ('')
     # return render_template('placeholder.html')
 
