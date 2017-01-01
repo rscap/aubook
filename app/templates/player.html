@@ -17,6 +17,10 @@
         Your browser does not support the audio element.
       </audio>
     </div>
+    <button id=rewind15secs class="w3-btn w3-light-gray" type="submit" onclick= changeTime('-',.15) ><bold><< -15 sec</bold></button>
+    <!-- <button id=createbookmark class="w3-btn w3-light-gray" type="submit" onclick=hangeTime('+',.15><bold>bookmark</bold></button> -->
+    <button id=ff15secs class="w3-btn w3-light-gray" type="submit" onclick=changeTime('+',.15)><bold>+15 sec>></bold></button>
+
 
     <img id='loading' style='display: none' src='/static/img/loading.gif'>
 
@@ -36,7 +40,7 @@
 
 
     <script type='text/javascript'>
-     $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+
     current_playing_id = null
 
     var get_li = function() {
@@ -180,12 +184,17 @@
 
 
 
-    function waitForIt(bookID){
-      console.log('got it! '+bookID.user)
-    }
-
     function wowo(targetid) {
       $(targetid).hide();
+    }
+
+    function changeTime(op, time) {
+      if (op == '+') {
+        aud.currentTime = aud.currentTime + time;
+      }
+      else {
+          aud.currentTime = aud.currentTime - time;
+      };
     }
 
     function timeInfo(book_id) {
