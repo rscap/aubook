@@ -18,7 +18,7 @@
       </audio>
     </div>
     <button id=rewind15secs class="w3-btn w3-light-gray" type="submit" onclick= changeTime('-',.15) ><bold><< -15 sec</bold></button>
-    <!-- <button id=createbookmark class="w3-btn w3-light-gray" type="submit" onclick=hangeTime('+',.15><bold>bookmark</bold></button> -->
+    <!-- <button id=createbookmark class="w3-btn w3-light-gray" type="submit" onclick=wowo(createbookmark)><bold>bookmark</bold></button> -->
     <button id=ff15secs class="w3-btn w3-light-gray" type="submit" onclick=changeTime('+',.15)><bold>+15 sec>></bold></button>
 
 
@@ -36,7 +36,7 @@
       {% endif %}
       </ul>
     </div>
-    <button id=buttoni class="w3-btn w3-blue" type="submit" onclick="wowo(buttoni)">buttoni</button>
+    <!-- <button id=buttoni class="w3-btn w3-blue" type="submit" onclick="wowo(buttoni)">buttoni</button> -->
 
 
     <script type='text/javascript'>
@@ -58,7 +58,7 @@
           document.getElementById('audio').setAttribute('src', '/audio'+continut);
           document.getElementById('currentPlaying').innerHTML = this.textContent;
           //var t = timeInfo('currentTime=none&book_id='+current_playing_id);
-          timeInfo(current_playing_id);
+          getTime(current_playing_id);
           console.log('ran after timeInfo function')
         };
       }
@@ -197,7 +197,7 @@
       };
     }
 
-    function timeInfo(book_id) {
+    function getTime(book_id) {
       $.ajax({
         type: 'POST',
         url: '/time',
@@ -209,10 +209,10 @@
             $(loading).hide();
             $(player).show();
             console.log('done ran');
-        // fail: function() {
-        //     consol.log('fail')
-        //   }
-      }
+        },
+        error: function() {
+            consol.log('fail')
+        }
     });
   }
 
