@@ -17,12 +17,20 @@
         Your browser does not support the audio element.
       </audio>
     </div>
-    <button id=rewind15secs class="w3-btn w3-light-gray" type="submit" onclick= changeTime('-',.15) ><bold><< -15 sec</bold></button>
-    <!-- <button id=createbookmark class="w3-btn w3-light-gray" type="submit" onclick=wowo(createbookmark)><bold>bookmark</bold></button> -->
+    <button id=rewind15secs class="w3-btn w3-light-gray" type="submit" onclick=changeTime('-',.15) ><bold><< -15 sec</bold></button>
+    <!-- <button id=bookmark class="w3-btn w3-light-gray" type="submit" onclick="wowo(bookmark)"><bold>bookmark</bold></button> -->
+    <button id=bookmark class="w3-btn w3-light-gray" type="submit" onclick="$('#createBookmark').toggle();"><bold>bookmark</bold></button>
     <button id=ff15secs class="w3-btn w3-light-gray" type="submit" onclick=changeTime('+',.15)><bold>+15 sec>></bold></button>
 
 
     <img id='loading' style='display: none' src='/static/img/loading.gif'>
+
+    <div id='createBookmark' style='display: none'>
+      <form action="" method=post enctype=multipart/form-data>
+        <p><textarea id=desc rows="4" cols="30" type="textarea" placeholder="Bookmark desc max 240 characters" maxlength="240"></textarea>
+        <p><input id=descSubmit class="w3-btn w3-blue" type="submit">
+      </form>
+    </div>
 
     <div>
       <ul style="list-style-type:none">
@@ -58,7 +66,7 @@
           document.getElementById('audio').setAttribute('src', '/audio'+continut);
           document.getElementById('currentPlaying').innerHTML = this.textContent;
           //var t = timeInfo('currentTime=none&book_id='+current_playing_id);
-          getTime(current_playing_id);
+          retrieveTime(current_playing_id);
           console.log('ran after timeInfo function')
         };
       }
@@ -90,6 +98,10 @@
       }
     }
 
+    // function createBookmark() {
+    //   $(createBookmark).hide();
+    // }
+
 
     // jQuery version of javascript below (mostly)
     // {% for book in booklist %}
@@ -101,92 +113,20 @@
     //    });
     // {% endfor %}
 
-
-    // jQuery for timed events
-    // $(document).ready(function(){
-    //   console.log('ready!');
-    //   //i=0;
-    //   setInterval(hey, 1000);
-    // });
-
-    // function hey(){
-    //       //i++
-    //       console.log('Hey! seconds has gone by.')
-    //       console.log('curretTime = '+aud.currentTime)
+    // function wowo(targetid) {
+    //     console.log(targetid)
+    //   $(targetid).hide();
     // }
 
-    // m = aud.currentTime;
-    // n = "/postTime/?time="+aud.currentTime+'&'+'current_playing_id='+current_playing_id
-    // nn = "/postTime/time="+aud.currentTime+'&'+'current_playing_id='+current_playing_id
-    // what = typeof m;
-    // console.log(what)
-    // $('Button').click(
-    //   function testPost() {
-    //     console.log('current playing id = '+current_playing_id)
-    //     var req = new XMLHttpRequest();
-    //     req.open("POST",nn)
-    //     //req.send(n)
-    //     req.send()
-    //     //console.log('time = '+m)
-    //     console.log('aud.currentTime = '+aud.currentTime)
-    //     console.log(req.status, req.statusText);
-    //     console.log('req.getResponseHeader(content-type) = '+req.getResponseHeader('content-type'))
-    // });
 
 
+    // jQuery for timed events
+    $(document).ready(function(){
+      console.log('ready!');
+      //i=0;
+      setInterval(saveTime, 1000);
+    });
 
-    var url = "/time";
-
-    document.getElementById('audio').onpause = function() {
-    //if(http.readyState == 4 && http.status == 200) {
-        // alert(http.responseText);
-        var http = new XMLHttpRequest();
-        var params = "currentTime="+aud.currentTime+'&book_id='+current_playing_id;
-        console.log('*************** in onpause function ***********');
-        console.log('params in send = '+params);
-        http.open("POST",url,true);
-        //http.setRequestHeader("Content-type","application/json;charset=UTF-8")
-        //http.send(JSON.stringify({id:current_playing_id,currentTime:aud.currentTime}));
-        //Send the proper header information along with the request
-        http.setRequestHeader('Content-type','application/x-www-form-urlencoded')
-        http.send(params);
-        // http.send({'id':'somenumber','time':'sometime'})
-        }
-
-    // function timeInfo(params) {
-    //     var http = new XMLHttpRequest();
-    //     // var params ='book_id='+current_playing_id;
-    //     http.open('POST',url,true);
-    //     http.setRequestHeader('Content-type','application/x-www-form-urlencoded')
-    //     http.send(params)
-    //     console.log('http.responseText = '+http.responseText)
-    //     console.log('params = '+params);
-    //   }
-
-    // function timeInfo(book_id) {
-    //   $(player).hide();
-    //   $(loading).show();
-    //   $.ajax('/time', {
-    //      book_id: book_id
-    //    }).done(function(book) {
-    //          //waitForIt(cuser)
-    //          //aud.currentTime = book.currentTime;
-    //          console.log('book.id = '+book.id)
-    //          $(loading).hide();
-    //          $(player).show();
-    //          console.log('done ran')
-    //          //console.log('got yo '+cuser.user)
-    //          //return cuser.user
-    //      }).fail(function() {
-    //          console.log('fail')
-    //      });
-    //   }
-
-
-
-    function wowo(targetid) {
-      $(targetid).hide();
-    }
 
     function changeTime(op, time) {
       if (op == '+') {
@@ -197,10 +137,24 @@
       };
     }
 
-    function getTime(book_id) {
+    function saveTime() {
+      if (current_playing_id != null) {
       $.ajax({
         type: 'POST',
-        url: '/time',
+        url: '/saveTime',
+        data: JSON.stringify({'book_id':current_playing_id,'currentTime':aud.currentTime}, null, '\t'),
+        contentType:'application/json;charset=UTF-8',
+        success: function(){
+          console.log('time saved')
+        }
+      })
+      }
+     }
+
+    function retrieveTime(book_id) {
+      $.ajax({
+        type: 'POST',
+        url: '/retrieveTime',
         data: JSON.stringify({'book_id':current_playing_id}, null, '\t'),
         contentType: 'application/json;charset=UTF-8',
         success: function(currentBookTime) {
@@ -211,10 +165,12 @@
             console.log('done ran');
         },
         error: function() {
-            consol.log('fail')
+            console.log('fail')
         }
     });
   }
+
+
 
 
     window.onload = get_li;

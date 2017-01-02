@@ -66,8 +66,8 @@ class Book(db.Model):
 class Bookmark(db.Model):
     __tablename__ = 'bookmarks'
     id = db.Column(db.Integer, primary_key=True)
-    desc = db.Column(db.String(120))
-    time = db.Column(db.String(20))
+    desc = db.Column(db.String(240))
+    time = db.Column(db.Float)
     book_id = db.Column(db.Integer, db.ForeignKey(Book.id), index=True)
     #book = relationship(Book, backref=backref('books', lazy='dynamic'))
     user_id = db.Column(db.Integer, db.ForeignKey(User.id),index=True)

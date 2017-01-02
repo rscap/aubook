@@ -240,10 +240,31 @@ def serve_audio(path):
     return send_from_directory(dir, path)
 
 
+@app.route('/retrieveTime', methods=['POST'])
+@login_required
+def retrieveTime():
+    g.user = current_user
+    print('before request')
+    print(request.json['book_id'])
+    currentBook = db.session.query(models.BookUser).filter_by(user_id = current_user.id, book_id = request.json['book_id']).one()
+    print('currentBook.currentTime = '+str(currentBook.currentTime))
+    currentBookTime = currentBook.currentTime
+    print(type(currentBookTime))
+    return jsonify(currentBookTime=currentBookTime)
+
+@app.route('/saveTime', methods=['POST'])
+@login_required
+def saveTime():
+    g.user = current_user
+    currentBook = db.session.query(models.BookUser).filter_by(user_id = current_user.id, book_id = request.json['book_id']).one()
+    currentBook.currentTime = request.json['currentTime']
+    db.session.commit()
+    return ('')
+
+
 @app.route('/time', methods=['GET','POST'])
 @login_required
 def posttime():
-
     g.user = current_user
     print('before request')
     print(request.json['book_id'])
