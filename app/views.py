@@ -267,6 +267,9 @@ def saveTime():
 @login_required
 def saveBookmark():
     g.user = current_user
+    if request.json['book_id'] == 'None':
+        flash('Please select a book, before creating a bookmark')
+        return redirect(request.url)
     print(type(request.json['desc']))
     print('desc = '+str(request.json['desc']))
     print('time = '+str(request.json['time']))

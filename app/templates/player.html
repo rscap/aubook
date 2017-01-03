@@ -10,6 +10,7 @@
     {% else %}
     <h3 id='currentPlaying'>No Title Present</h3>
     {% endif %}
+
     <div id='player'>
       <audio width:"100%"; onclick="play(this)" id='audio' controls="true">
         <!-- <source src="static/audio/foo/foo.mp3" > -->
@@ -18,8 +19,8 @@
       </audio>
     </div>
     <button id=rewind15secs class="w3-btn w3-light-gray" type="submit" onclick=changeTime('-',.15) ><bold><< -15 sec</bold></button>
-    <!-- <button id=bookmark class="w3-btn w3-light-gray" type="submit" onclick="wowo(bookmark)"><bold>bookmark</bold></button> -->
-    <button id=bookmark class="w3-btn w3-light-gray" type="submit" onclick="$('#createBookmark').toggle();"><bold>bookmark</bold></button>
+    <button id=bookmark class="w3-btn w3-light-gray" type="submit" onclick="blah()"><bold>bookmark</bold></button>
+    <!-- <button id=bookmark class="w3-btn w3-light-gray" type="submit" onclick="$('#createBookmark').toggle();"><bold>bookmark</bold></button> -->
     <button id=ff15secs class="w3-btn w3-light-gray" type="submit" onclick=changeTime('+',.15)><bold>+15 sec>></bold></button>
 
 
@@ -98,22 +99,15 @@
       }
     }
 
-    // $('#descSubmitBtn').click(function() {
-    //   console.log('submit button for bookmarks clicked')
-    //   $.ajax({
-    //     type: 'POST',
-    //     url: '/saveBookmark',
-    //     data: JSON.stringify({'book_id':current_playing_id,'currentTime':aud.currentTime}, null, '\t'),
-    //     contentType:'application/json;charset=UTF-8',
-    //     success: function(){
-    //       console.log('bookmark saved')
-    //     }
-    //   })
-    // })
 
-    // function createBookmark() {
-    //   $(createBookmark).hide();
-    // }
+    function blah() {
+    console.log('blah')
+      if (current_playing_id == null) {
+        $('#currentPlaying').html("<h3 class=\'w3-text-red\'>  No book slected. Select book before creating bookmark.<h3>");
+      } else {
+        $('#createBookmark').toggle();
+      }
+    }
 
 
     // jQuery version of javascript below (mostly)
@@ -151,7 +145,6 @@
     }
 
     function saveBookmark() {
-      // if current_playing_id = null:
       console.log('saveBookmark button pushed!');
       var form = new FormData(document.getElementById('bookmarkForm'));
       var desc = form.get('desc');
@@ -168,7 +161,8 @@
         error: function() {
             console.log('bookmark not saved')
           }
-      })
+      });
+      $('#createBookmark').toggle();
       }
      //}
 
