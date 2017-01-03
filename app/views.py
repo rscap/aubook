@@ -32,6 +32,7 @@ def allowed_file(filename):
 #### routes ####
 ################
 
+
 @app.route('/')
 def home():
     return 'hey yo: Audiobook app'
@@ -258,6 +259,20 @@ def saveTime():
     g.user = current_user
     currentBook = db.session.query(models.BookUser).filter_by(user_id = current_user.id, book_id = request.json['book_id']).one()
     currentBook.currentTime = request.json['currentTime']
+    db.session.add(currentBook)
+    db.session.commit()
+    return ('')
+
+@app.route('/saveBookmark', methods=['POST'])
+@login_required
+def saveBookmark():
+    g.user = current_user
+    print(type(request.json['desc']))
+    print('desc = '+str(request.json['desc']))
+    print('time = '+str(request.json['time']))
+    print('book_id = '+str(request.json['book_id']))
+    newBookmark = models.Bookmark(desc=request.json['desc'],time=request.json['time'],book_id=request.json['book_id'],user_id=current_user.id)
+    db.session.add(newBookmark)
     db.session.commit()
     return ('')
 

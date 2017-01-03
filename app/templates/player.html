@@ -26,9 +26,9 @@
     <img id='loading' style='display: none' src='/static/img/loading.gif'>
 
     <div id='createBookmark' style='display: none'>
-      <form action="" method=post enctype=multipart/form-data>
-        <p><textarea id=desc rows="4" cols="30" type="textarea" placeholder="Bookmark desc max 240 characters" maxlength="240"></textarea>
-        <p><input id=descSubmit class="w3-btn w3-blue" type="submit">
+      <form id=bookmarkForm action="" method='post' enctype='application/json'>
+        <p><textarea name=desc id=desc rows="4" cols="30" type="textarea" placeholder="Bookmark desc max 240 characters" maxlength="240"></textarea>
+        <p><input type=button id=descSubmitBtn class="w3-btn w3-blue" value='make bookmark' onclick=saveBookmark()>
       </form>
     </div>
 
@@ -98,6 +98,19 @@
       }
     }
 
+    // $('#descSubmitBtn').click(function() {
+    //   console.log('submit button for bookmarks clicked')
+    //   $.ajax({
+    //     type: 'POST',
+    //     url: '/saveBookmark',
+    //     data: JSON.stringify({'book_id':current_playing_id,'currentTime':aud.currentTime}, null, '\t'),
+    //     contentType:'application/json;charset=UTF-8',
+    //     success: function(){
+    //       console.log('bookmark saved')
+    //     }
+    //   })
+    // })
+
     // function createBookmark() {
     //   $(createBookmark).hide();
     // }
@@ -137,6 +150,29 @@
       };
     }
 
+    function saveBookmark() {
+      // if current_playing_id = null:
+      console.log('saveBookmark button pushed!');
+      var form = new FormData(document.getElementById('bookmarkForm'));
+      var desc = form.get('desc');
+      console.log(desc)
+      // if (current_playing_id != null) {
+      $.ajax({
+        type: 'POST',
+        url: '/saveBookmark',
+        data: JSON.stringify({'book_id':current_playing_id,'time':aud.currentTime,'desc':desc}, null, '\t'),
+        contentType:'application/json;charset=UTF-8',
+        success: function(){
+          console.log('time saved')
+        },
+        error: function() {
+            console.log('bookmark not saved')
+          }
+      })
+      }
+     //}
+
+
     function saveTime() {
       if (current_playing_id != null) {
       $.ajax({
@@ -165,7 +201,7 @@
             console.log('done ran');
         },
         error: function() {
-            console.log('fail')
+            console.log('time not retrieved')
         }
     });
   }
