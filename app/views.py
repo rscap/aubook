@@ -218,9 +218,12 @@ def newplayer():
     currently_checkedout_books = []
     g.user=current_user
     checkedout_books_by_user = db.session.query(models.BookUser).filter_by(user_id = current_user.id).all()
+    # bookmarks = db.session.query(models.Bookmark).filter_by(user_id=current_user.id).all()
+    # for e in bookmarks:
+    #     print(e)
     # for e in checkedout_books_by_user:
     #     print('e.book_id = '+str(e.book_id))
-    print('\n')
+    # print('\n')
     for entry in checkedout_books_by_user:
         book = db.session.query(models.Book).filter_by(id = entry.book_id).one()
         # print('book type = '+str(type(book)))

@@ -11,6 +11,7 @@
     <h3 id='currentPlaying'>No Title Present</h3>
     {% endif %}
 
+
     <div id='player'>
       <audio width:"100%"; onclick="play(this)" id='audio' controls="true">
         <!-- <source src="static/audio/foo/foo.mp3" > -->
@@ -18,14 +19,17 @@
         Your browser does not support the audio element.
       </audio>
     </div>
+
+    <!-- buttons -->
     <button id=rewind15secs class="w3-btn w3-light-gray" type="submit" onclick=changeTime('-',.15) ><bold><< -15 sec</bold></button>
-    <button id=bookmark class="w3-btn w3-light-gray" type="submit" onclick="blah()"><bold>bookmark</bold></button>
+    <button id=bookmark class="w3-btn w3-light-gray" type="submit" onclick="enableBookmark()"><bold>bookmark</bold></button>
     <!-- <button id=bookmark class="w3-btn w3-light-gray" type="submit" onclick="$('#createBookmark').toggle();"><bold>bookmark</bold></button> -->
     <button id=ff15secs class="w3-btn w3-light-gray" type="submit" onclick=changeTime('+',.15)><bold>+15 sec>></bold></button>
 
-
+    <!-- hidden loading gif -->
     <img id='loading' style='display: none' src='/static/img/loading.gif'>
 
+    <!-- hidden bookmark interface -->
     <div id='createBookmark' style='display: none'>
       <form id=bookmarkForm action="" method='post' enctype='application/json'>
         <p><textarea name=desc id=desc rows="4" cols="30" type="textarea" placeholder="Bookmark desc max 240 characters" maxlength="240"></textarea>
@@ -50,7 +54,14 @@
 
     <script type='text/javascript'>
 
-    current_playing_id = null
+    current_playing_id = null;
+    activeElement = null;
+
+    document.body.onclick=function() {
+      activeElement = document.activeElement.id;
+      console.log(activeElement);
+    }
+
 
     var get_li = function() {
       //get the LI tags
@@ -86,22 +97,23 @@
 
 
     document.body.onkeypress = function(e){
-      if(e.keyCode == 32){
-        console.log('space bar pressed')
-        if (aud.paused) {
-          console.log('status is paused')
-          console.log('playing')
-          aud.play()
-        } else {
-          console.log('pausing')
-          aud.pause()
+      if (activeElement != 'desc') {
+        if(e.keyCode == 32){
+          console.log('space bar pressed')
+          if (aud.paused) {
+            console.log('status is paused')
+            console.log('playing')
+            aud.play()
+          } else {
+            console.log('pausing')
+            aud.pause()
+          }
         }
       }
     }
 
 
-    function blah() {
-    console.log('blah')
+    function enableBookmark() {
       if (current_playing_id == null) {
         $('#currentPlaying').html("<h3 class=\'w3-text-red\'>  No book slected. Select book before creating bookmark.<h3>");
       } else {
