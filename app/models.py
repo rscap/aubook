@@ -8,6 +8,14 @@ class BookUser(db.Model):
     book_id = db.Column(db.Integer, db.ForeignKey('book.id'))
     currentTime = db.Column(db.Float, default=0.0)
 
+    def __init__(self,user_id,book_id,currentTime):
+        self.user_id = user_id
+        self.book_id = book_id
+        self.currentTime = currentTime
+
+    def __repr__(self):
+        return "<BookUser(user_id='%s',book_id='%s',currentTime='%s')>" % (self.user_id,self.book_id,self.currentTime)
+
 
 class User(db.Model):
     #__tablename__ = 'users'
@@ -54,14 +62,14 @@ class Book(db.Model):
     #user_id = Column(Integer, ForeignKey(User.id))
     #user = relationship("User" secondary=BookUser, backref='users')
 
-    # def __init__(self, title=None, author=None, shareable=True):
-    #     self.title = title
-    #     self.author = author
-    #     self.sharable = shareable
-    #     #self.user_id = user_id
+    def __init__(self, title=None, author=None, shareable=True):
+        self.title = title
+        self.author = author
+        self.sharable = shareable
+        #self.user_id = user_id
 
-    # def __repr__(self):
-    #     return "<Book(title='%s', author='%s')>" % (self.title, self.author, self.shareable)
+    def __repr__(self):
+        return "<Book(title='%s', author='%s',shareable='%s')>" % (self.title, self.author, self.shareable)
 
 class Bookmark(db.Model):
     __tablename__ = 'bookmarks'
@@ -81,6 +89,14 @@ class Bookmark(db.Model):
 
     def __repr__(self):
         return "<Bookmark(desc='%s', time='%s', book_id='%s', user_id='%s')>" % (self.desc, self.time,self.book_id,self.user_id)
+
+    def seralize(self):
+        return {
+            'desc': self.desc,
+            'time': self.time,
+            'book_id': self.book_id,
+            'user_id': self.user_id,
+        }
 
 class PWReset(db.Model):
     id = db.Column(db.Integer, primary_key=True)

@@ -13,7 +13,7 @@
 
 
     <div id='player'>
-      <audio width:"100%"; onclick="play(this)" id='audio' controls="true">
+      <audio id='audio' width:"100%"; onclick="play(this)" controls="true">
         <!-- <source src="static/audio/foo/foo.mp3" > -->
         <source src="" >
         Your browser does not support the audio element.
@@ -22,7 +22,7 @@
 
     <!-- buttons -->
     <button id=rewind15secs class="w3-btn w3-light-gray" type="submit" onclick=changeTime('-',.15) ><bold><< -15 sec</bold></button>
-    <button id=bookmark class="w3-btn w3-light-gray" type="submit" onclick="enableBookmark()"><bold>bookmark</bold></button>
+    <button id=bookmark class="w3-btn w3-light-gray" type="submit" onclick="enableBookmarkUI()"><bold>bookmark</bold></button>
     <!-- <button id=bookmark class="w3-btn w3-light-gray" type="submit" onclick="$('#createBookmark').toggle();"><bold>bookmark</bold></button> -->
     <button id=ff15secs class="w3-btn w3-light-gray" type="submit" onclick=changeTime('+',.15)><bold>+15 sec>></bold></button>
 
@@ -37,7 +37,7 @@
       </form>
     </div>
 
-    <div>
+    <div id=checkedout_Books>
       <ul style="list-style-type:none">
       {% if booklist|length > 0 %}
         {% for book in booklist %}
@@ -49,6 +49,17 @@
       {% endif %}
       </ul>
     </div>
+
+
+  <div id=bookmarks >
+      {% if bookmarks %}
+        <h5>Bookmarks</h3>
+          {% for bookmark in Bookmarks %}
+             <li> {{ bookmark.desc }}
+          {% endfor %}
+          do this part!!!
+        {% endif %}
+    </div>
     <!-- <button id=buttoni class="w3-btn w3-blue" type="submit" onclick="wowo(buttoni)">buttoni</button> -->
 
 
@@ -57,12 +68,22 @@
     current_playing_id = null;
     activeElement = null;
 
+    // assigns the active element to the var activeElement (used to stop spacebar control while notating bookmarks)
     document.body.onclick=function() {
       activeElement = document.activeElement.id;
-      console.log(activeElement);
+      console.log('activeElement = '+activeElement);
     }
 
 
+    // jQuery version of javascript below (mostly)
+    // {% for book in booklist %}
+    //    $('li').click(function(){
+    //      var str = $(this).text()
+    //      //console.log(str)
+    //      $('audio').attr('src', '/audio/'+str);
+    //      $('currentPlaying').innerHTML = this.textContent;
+    //    });
+    // {% endfor %}
     var get_li = function() {
       //get the LI tags
       var tags_li = document.getElementsByTagName('li');
@@ -73,18 +94,18 @@
         tags_li[i].onclick = function() {
           // var continut = '/'+this.id+'/'+this.textContent || this.innerText +'.mp3'; // gets the content
           var continut = '/'+this.id+'/'+this.textContent+'.mp3'; // gets the content
-          console.log(continut)
+          console.log('continut = '+continut)
           current_playing_id = this.id
           document.getElementById('audio').setAttribute('src', '/audio'+continut);
           document.getElementById('currentPlaying').innerHTML = this.textContent;
           //var t = timeInfo('currentTime=none&book_id='+current_playing_id);
           retrieveTime(current_playing_id);
-          console.log('ran after timeInfo function')
+          retrieveBookmarks(current_playing_id);
         };
       }
     };
 
-
+    // stuff that happens when the page loads
     console.log('start!')
     var aud = document.getElementById('audio')
     console.log('aud.paused state: '+aud.paused)
@@ -95,7 +116,7 @@
       console.log('current time = '+aud.currentTime)
     }
 
-
+    // enables spacebar pause/play action
     document.body.onkeypress = function(e){
       if (activeElement != 'desc') {
         if(e.keyCode == 32){
@@ -112,8 +133,8 @@
       }
     }
 
-
-    function enableBookmark() {
+    // controls the bookmark UI
+    function enableBookmarkUI() {
       if (current_playing_id == null) {
         $('#currentPlaying').html("<h3 class=\'w3-text-red\'>  No book slected. Select book before creating bookmark.<h3>");
       } else {
@@ -122,31 +143,19 @@
     }
 
 
-    // jQuery version of javascript below (mostly)
-    // {% for book in booklist %}
-    //    $('li').click(function(){
-    //      var str = $(this).text()
-    //      //console.log(str)
-    //      $('audio').attr('src', '/audio/'+str);
-    //      $('currentPlaying').innerHTML = this.textContent;
-    //    });
-    // {% endfor %}
-
     // function wowo(targetid) {
     //     console.log(targetid)
     //   $(targetid).hide();
     // }
 
-
-
     // jQuery for timed events
     $(document).ready(function(){
       console.log('ready!');
       //i=0;
-      setInterval(saveTime, 1000);
+      setInterval(saveTime, 10000);
     });
 
-
+    // operates the fastforward and rewind buttons
     function changeTime(op, time) {
       if (op == '+') {
         aud.currentTime = aud.currentTime + time;
@@ -156,6 +165,7 @@
       };
     }
 
+    // logic for saving bookmarks
     function saveBookmark() {
       console.log('saveBookmark button pushed!');
       var form = new FormData(document.getElementById('bookmarkForm'));
@@ -178,39 +188,77 @@
       }
      //}
 
-
-    function saveTime() {
-      if (current_playing_id != null) {
-      $.ajax({
-        type: 'POST',
-        url: '/saveTime',
-        data: JSON.stringify({'book_id':current_playing_id,'currentTime':aud.currentTime}, null, '\t'),
-        contentType:'application/json;charset=UTF-8',
-        success: function(){
-          console.log('time saved')
-        }
-      })
-      }
+     // saves currentTime for book being played to db
+     function saveTime() {
+        if (current_playing_id != null) {
+          $.ajax({
+            type: 'POST',
+            url: '/saveTime',
+            data: JSON.stringify({'book_id':current_playing_id,'currentTime':aud.currentTime}, null, '\t'),
+            contentType:'application/json;charset=UTF-8',
+            success: function(){
+              console.log('time saved')
+            },
+            error: function() {
+              console.log('currentTime not saved')
+            }
+           })
+         }
      }
 
-    function retrieveTime(book_id) {
-      $.ajax({
-        type: 'POST',
-        url: '/retrieveTime',
-        data: JSON.stringify({'book_id':current_playing_id}, null, '\t'),
-        contentType: 'application/json;charset=UTF-8',
-        success: function(currentBookTime) {
-            console.log('currentBookTime = '+currentBookTime.currentBookTime)
-            aud.currentTime = currentBookTime.currentBookTime;
-            $(loading).hide();
-            $(player).show();
-            console.log('done ran');
-        },
-        error: function() {
-            console.log('time not retrieved')
-        }
-    });
-  }
+     // retrieves times time from db
+     function retrieveTime() {
+        $.ajax({
+          type: 'POST',
+          url: '/retrieveTime',
+          data: JSON.stringify({'book_id':current_playing_id}, null, '\t'),
+          contentType: 'application/json;charset=UTF-8',
+          success: function(currentBookTime) {
+              console.log('currentBookTime = '+currentBookTime.currentBookTime)
+              //console.log('Bookmarks = '+bookmarks)
+              aud.currentTime = currentBookTime.currentBookTime;
+              $(loading).hide();
+              $(player).show();
+            //  console.log('retrieveTime function done ran');
+          },
+          error: function() {
+              console.log('time not retrieved')
+          }
+        });
+     }
+
+     // retrieve Bookmark for selected book
+     function retrieveBookmarks() {
+        console.log('retrieveBookmark running');
+      //   $('#bookmarks').load('/retrieveBookmark', current_playing_id,
+      //    function () {
+      //      console.log('textStatus = '+status);
+      //      console.log('response = '+response);
+      //      console.log('retrieveBookmark ran?1');
+      //    }
+      //  )
+        $.ajax({
+          type: 'POST',
+          url: '/retrieveBookmark',
+          data: JSON.stringify({'book_id':current_playing_id}, null, '\t'),
+          contentType: 'application/json;charset=UTF-8',
+          success: function(data) {
+            console.log('retrieveBookmark ran')
+            console.log('type of = '+typeof data)
+            console.log('number of bookmarks = '+data.bookmark.length)
+            for (i=0; i<data.bookmark.lenth; i++){
+              console.log(data.bookmark[i]);
+            }
+            console.log(data.bookmark[0])
+            console.log('data = '+data.bookmark[0]['time'])
+            $('#bookmarks').html =(data)
+          },
+          error: function() {
+            console.log('didn\'t get bookmarks')
+          }
+        })
+     }
+
 
 
 

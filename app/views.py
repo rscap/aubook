@@ -218,11 +218,14 @@ def newplayer():
     currently_checkedout_books = []
     g.user=current_user
     checkedout_books_by_user = db.session.query(models.BookUser).filter_by(user_id = current_user.id).all()
-    # bookmarks = db.session.query(models.Bookmark).filter_by(user_id=current_user.id).all()
+    # booklist_inbookmarks = []
+    # print('all bookmarks for current user:')
     # for e in bookmarks:
-    #     print(e)
+    #     booklist_inbookmarks.append(e.book_id)
+    # print(booklist_inbookmarks)
+    # print('checkedout_books_by_user:')
     # for e in checkedout_books_by_user:
-    #     print('e.book_id = '+str(e.book_id))
+    #     print(e)
     # print('\n')
     for entry in checkedout_books_by_user:
         book = db.session.query(models.Book).filter_by(id = entry.book_id).one()
@@ -232,8 +235,6 @@ def newplayer():
         # print(book.title)
         currently_checkedout_books.append(book)
     return render_template('player.html',title='player NEW',booklist=currently_checkedout_books,bookInfo=checkedout_books_by_user)
-
-
 
 
 @app.route('/audio/<path:path>')
@@ -248,13 +249,17 @@ def serve_audio(path):
 @login_required
 def retrieveTime():
     g.user = current_user
-    print('before request')
-    print(request.json['book_id'])
+    # print('/retrieveTime start')
+    # print('book_id = '+str(request.json['book_id']))
     currentBook = db.session.query(models.BookUser).filter_by(user_id = current_user.id, book_id = request.json['book_id']).one()
-    print('currentBook.currentTime = '+str(currentBook.currentTime))
+    # bookmarks = db.session.query(models.Bookmark).filter_by(user_id=current_user.id).all()
+    # print('bookmarks = '+str(bookmarks))
+    # print('currentBook.currentTime = '+str(currentBook.currentTime))
     currentBookTime = currentBook.currentTime
-    print(type(currentBookTime))
-    return jsonify(currentBookTime=currentBookTime)
+    # bookmarkdesc=bookmarks.
+    # print(type(currentBookTime))
+    # print('/retrieveTime end')
+    return jsonify(currentBookTime=currentBookTime)#,bookmarks
 
 @app.route('/saveTime', methods=['POST'])
 @login_required
@@ -282,63 +287,40 @@ def saveBookmark():
     db.session.commit()
     return ('')
 
-
-@app.route('/time', methods=['GET','POST'])
+@app.route('/retrieveBookmark', methods=['POST'])
 @login_required
-def posttime():
+def retrieveBookmark():
     g.user = current_user
-    print('before request')
-    print(request.json['book_id'])
-    currentBook = db.session.query(models.BookUser).filter_by(user_id = current_user.id, book_id = request.json['book_id']).one()
-    print('currentBook.currentTime = '+str(currentBook.currentTime))
-    currentBookTime = currentBook.currentTime
-    print(type(currentBookTime))
-    return jsonify(currentBookTime=currentBookTime)
-    # if request.method == 'GET':
-    #     print('book_id = '+str(request.form['book_id']))
-    #     # return Response(
-    #     #    r.text
-    #     #    status=r.status.code,
-    #     # )
-    #     currentBook = db.session.query(models.BookUser).filter_by(user_id = current_user.id, book_id = request.form['book_id']).one()
-    #     currentTime = currentBook.currentTime
-    #     return(resp.text, resp.status_code, resp.headers.items(), currentTime)
-    # # return ('')
-    #
-    # if request.method == 'POST':
-    #     print('book_id = '+str(request.form['book_id']))
-    #     print('currentTime = '+str(request.form['currentTime']))
-    #     print('request.data = '+request.data) # returns no data
-    #     if request.form['currentTime'] == 'none':
-    #         print('no currentTime value provided')
-    #         currentBook = db.session.query(models.BookUser).filter_by(user_id = current_user.id, book_id = request.form['book_id']).one()
-    #         # c = currentBook.currentTime
-    #         # print(c)
-    #         return str(currentBook.currentTime)
-    #     else:
-    #         # print('request.url = '+request.url) # returns no data
-    #         # print('request.query_string = '+request.query_string) # returns no data
-    #         # print('request.data = '+request.data) # returns no data
-    #         print('book_id = '+str(request.form['book_id']))
-    #         print('currentTime = '+str(request.form['currentTime']))
-    #         # print('request.values[\'id\'] = '+str(request.values['id'])) # returns data when charset = application/json;charset=UTF-8
-    #         # print('request.values[\'currentTime\'] = '+str(request.values['currentTime'])) # returns data when charset = application/json;charset=UTF-8
-    #         # print('id = '+str(request.args.get('id'))) # returns data when charset = application/json;charset=UTF-8
-    #         # print('request.json[\'id\'] = '+request.json['id'])
-    #         # print('request.json[\'currentTime\'] = '+str(request.json['currentTime']))
-    #         # print('currentTime = '+str(request.args.get('time'))) # returns no data
-    #         # print('request.view_args = '+str(request.view_args))  # returns no data
-    #         # print('request.get_json = '+str(request.get_json))
-    #         # print('request.is_json = '+str(request.is_json))
-    #         # print('request.json = '+str(request.json))
-    #         # print('request.is_xhr = '+str(request.is_xhr))
-    #         # goal is to update BookUser table with new time entry for current_user and book_id
-    #         currentBook = db.session.query(models.BookUser).filter_by(user_id = current_user.id, book_id = request.form['book_id']).one()
-    #         currentBook.currentTime = request.form['currentTime']
-    #         db.session.commit()
-        # return ('')
-    # return render_template('placeholder.html')
-
+    print('\n')
+    print('retrieveBookmark start')
+    print('book_id = '+str(request.json['book_id']))
+    bookmarks_q = db.session.query(models.Bookmark).filter_by(user_id=current_user.id, book_id= request.json['book_id']).all()
+    print('bookmarks_q = '+str(bookmarks_q))
+    l = []
+    for e in bookmarks_q:
+        print('e = '+str(e))
+        dict = e.seralize()
+        print('dict[\'time\'] = '+str(dict['time']))
+        print('type(dict) = '+str(type(dict)))
+        print('dict = '+str(dict))
+        #l.append(e.seralize())
+        l.append(dict)
+    print('\n')
+    print('l = '+str(l))
+    print('\n')
+    bookmarks = jsonify({'bookmark': l})
+    # bookmarks = jsonify(l)
+    print('\n')
+    print('bookmarks = '+str(bookmarks))
+    print('\n')
+    print('type(bookmarks.data) = '+str(type(bookmarks.data)))
+    print('\n')
+    print('bookmarks.data = '+str(bookmarks.data))
+    print('\n')
+    print('type(bookmarks) = '+str(type(bookmarks)))
+    print('\n')
+    #return jsonify(bookmarks=[e.seralize() for e in bookmarks_q])
+    return bookmarks
 
 @app.route("/upload", methods=['GET','POST'])
 @login_required
