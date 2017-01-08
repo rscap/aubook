@@ -185,7 +185,7 @@
 
      // saves currentTime for book being played to db
      function saveTime() {
-        if (current_playing_id != null) {
+        if (current_playing_id != null || activeElement == 'bookmark_list')  {
           $.ajax({
             type: 'POST',
             url: '/saveTime',
