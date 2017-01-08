@@ -51,15 +51,10 @@
     </div>
 
 
-  <div id=bookmarks >
-      {% if bookmarks %}
-        <h5>Bookmarks</h3>
-          {% for bookmark in Bookmarks %}
-             <li> {{ bookmark.desc }}
-          {% endfor %}
-          do this part!!!
-        {% endif %}
-    </div>
+  <div id=bookmarks>
+    <ul id=bookmark_list style="list-style-type:none">
+    </ul>
+  </div>
     <!-- <button id=buttoni class="w3-btn w3-blue" type="submit" onclick="wowo(buttoni)">buttoni</button> -->
 
 
@@ -243,24 +238,23 @@
           data: JSON.stringify({'book_id':current_playing_id}, null, '\t'),
           contentType: 'application/json;charset=UTF-8',
           success: function(data) {
-            console.log('retrieveBookmark ran')
-            console.log('type of = '+typeof data)
-            console.log('number of bookmarks = '+data.bookmark.length)
+            console.log('type of = '+typeof data);
+            console.log('number of bookmarks = '+data.bookmark.length);
+            $('#bookmark_list').empty();
+            $('#bookmark_list').html('<h3>Bookmarks</h3>')
             for (i=0; i<data.bookmark.length; i++){
+              $('#bookmark_list').append(data.bookmark[i]['desc']);
+              $('#bookmark_list').append('<br>');
               console.log(data.bookmark[i]);
             }
-            console.log(data.bookmark[0])
+            // console.log(data.bookmark[0])
             console.log('data = '+data.bookmark[0]['time'])
-            $('#bookmarks').html =(data)
           },
           error: function() {
             console.log('didn\'t get bookmarks')
           }
         })
      }
-
-
-
 
 
     window.onload = get_li;

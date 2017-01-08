@@ -5,7 +5,7 @@
 import os, pytz
 from datetime import datetime, timedelta
 from app import models, db, keygenerator, app
-from flask import render_template, flash, request, redirect, url_for, jsonify, send_from_directory, g
+from flask import render_template, flash, request, redirect, url_for, jsonify, send_from_directory, g, get_template_attribute
 from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash, generate_password_hash
 from mp3concat import concatAudio
@@ -291,35 +291,34 @@ def saveBookmark():
 @login_required
 def retrieveBookmark():
     g.user = current_user
-    print('\n')
-    print('retrieveBookmark start')
-    print('book_id = '+str(request.json['book_id']))
+    # print('\n')
+    # print('retrieveBookmark start')
+    # print('book_id = '+str(request.json['book_id']))
     bookmarks_q = db.session.query(models.Bookmark).filter_by(user_id=current_user.id, book_id= request.json['book_id']).all()
-    print('bookmarks_q = '+str(bookmarks_q))
+    # print('bookmarks_q = '+str(bookmarks_q))
     l = []
     for e in bookmarks_q:
-        print('e = '+str(e))
+        # print('e = '+str(e))
         dict = e.seralize()
-        print('dict[\'time\'] = '+str(dict['time']))
-        print('type(dict) = '+str(type(dict)))
-        print('dict = '+str(dict))
+        # print('dict[\'time\'] = '+str(dict['time']))
+        # print('type(dict) = '+str(type(dict)))
+        # print('dict = '+str(dict))
         #l.append(e.seralize())
         l.append(dict)
-    print('\n')
-    print('l = '+str(l))
-    print('\n')
+    # print('\n')
+    # print('l = '+str(l))
+    # print('\n')
     bookmarks = jsonify({'bookmark': l})
     # bookmarks = jsonify(l)
-    print('\n')
-    print('bookmarks = '+str(bookmarks))
-    print('\n')
-    print('type(bookmarks.data) = '+str(type(bookmarks.data)))
-    print('\n')
-    print('bookmarks.data = '+str(bookmarks.data))
-    print('\n')
-    print('type(bookmarks) = '+str(type(bookmarks)))
-    print('\n')
-    #return jsonify(bookmarks=[e.seralize() for e in bookmarks_q])
+    # print('\n')
+    # print('bookmarks = '+str(bookmarks))
+    # print('\n')
+    # print('type(bookmarks.data) = '+str(type(bookmarks.data)))
+    # print('\n')
+    # print('bookmarks.data = '+str(bookmarks.data))
+    # print('\n')
+    # print('type(bookmarks) = '+str(type(bookmarks)))
+    # print('\n')
     return bookmarks
 
 @app.route("/upload", methods=['GET','POST'])
