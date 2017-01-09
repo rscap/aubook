@@ -25,6 +25,8 @@
     <button id=bookmark class="w3-btn w3-light-gray" type="submit" onclick="enableBookmarkUI()"><bold>bookmark</bold></button>
     <!-- <button id=bookmark class="w3-btn w3-light-gray" type="submit" onclick="$('#createBookmark').toggle();"><bold>bookmark</bold></button> -->
     <button id=ff15secs class="w3-btn w3-light-gray" type="submit" onclick=changeTime('+',.15)><bold>+15 sec>></bold></button>
+    <button id=resumeTimeline class="w3-btn w3-light-gray" type="submit" onclick= function() { recordCurrentTime=true; } ><bold>Resume Reg Play</bold></button>
+
 
     <!-- hidden loading gif -->
     <img id='loading' style='display: none' src='/static/img/loading.gif'>
@@ -62,6 +64,7 @@
 
     current_playing_id = null;
     activeElement = null;
+    recordCurrentTime = true;
 
     // assigns the active element to the var activeElement (used to stop spacebar control while notating bookmarks)
     document.body.onclick=function() {
@@ -243,8 +246,9 @@
             $('#bookmark_list').empty();
             $('#bookmark_list').html('<h3>Bookmarks</h3>')
             for (i=0; i<data.bookmark.length; i++){
+              $('#bookmark_list').append('<li onclick="goToTime('+data.bookmark[i]['time']+')><a href="javascript:void(0);">');
               $('#bookmark_list').append(data.bookmark[i]['desc']);
-              $('#bookmark_list').append('<br>');
+              $('#bookmark_list').append('</li></a>');
               console.log(data.bookmark[i]);
             }
             // console.log(data.bookmark[0])
@@ -253,9 +257,11 @@
           error: function() {
             console.log('didn\'t get bookmarks')
           }
-        })
-     }
-
+         })
+        }
+    function goToTime(time){
+      aud.currentTime=time;
+    }
 
     window.onload = get_li;
     </script>
