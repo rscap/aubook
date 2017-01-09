@@ -103,6 +103,7 @@
       }
     };
 
+
     // stuff that happens when the page loads
     console.log('start!')
     var aud = document.getElementById('audio')
@@ -139,12 +140,6 @@
         $('#createBookmark').toggle();
       }
     }
-
-
-    // function wowo(targetid) {
-    //     console.log(targetid)
-    //   $(targetid).hide();
-    // }
 
     // jQuery for timed events
     $(document).ready(function(){
@@ -228,13 +223,6 @@
      // retrieve Bookmark for selected book
      function retrieveBookmarks() {
         console.log('retrieveBookmark running');
-      //   $('#bookmarks').load('/retrieveBookmark', current_playing_id,
-      //    function () {
-      //      console.log('textStatus = '+status);
-      //      console.log('response = '+response);
-      //      console.log('retrieveBookmark ran?1');
-      //    }
-      //  )
         $.ajax({
           type: 'POST',
           url: '/retrieveBookmark',
@@ -246,9 +234,7 @@
             $('#bookmark_list').empty();
             $('#bookmark_list').html('<h3>Bookmarks</h3>')
             for (i=0; i<data.bookmark.length; i++){
-              $('#bookmark_list').append('<li onclick="goToTime('+data.bookmark[i]['time']+')><a href="javascript:void(0);">');
-              $('#bookmark_list').append(data.bookmark[i]['desc']);
-              $('#bookmark_list').append('</li></a>');
+              $('#bookmark_list').append('<li><a href="avascript:void(0);" onclick=goToTime('+data.bookmark[i]['time']+');>'+data.bookmark[i]['desc']+'</a></li>')
               console.log(data.bookmark[i]);
             }
             // console.log(data.bookmark[0])
@@ -262,6 +248,13 @@
     function goToTime(time){
       aud.currentTime=time;
     }
+
+    // var get_bookmark_list = function () {
+    //   $('#bookmark_list').click(function(){
+    //     console.log('******'+this.text());
+    //   });
+    //     console.log(tags_li)
+    // }
 
     window.onload = get_li;
     </script>
