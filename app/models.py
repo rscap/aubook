@@ -92,6 +92,7 @@ class Bookmark(db.Model):
 
     def seralize(self):
         return {
+            'id':self.id,
             'desc': self.desc,
             'time': self.time,
             'book_id': self.book_id,

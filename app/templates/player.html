@@ -21,11 +21,11 @@
     </div>
 
     <!-- buttons -->
-    <button id=rewind15secs class="w3-btn w3-light-gray" type="submit" onclick=changeTime('-',.15) ><bold><< -15 sec</bold></button>
+    <button name=rewind15secs id=rewind15secs class="w3-btn w3-light-gray" type="submit" onclick=changeTime('-',.15) ><bold><< -15 sec</bold></button>
     <button id=bookmark class="w3-btn w3-light-gray" type="submit" onclick="enableBookmarkUI()"><bold>bookmark</bold></button>
     <!-- <button id=bookmark class="w3-btn w3-light-gray" type="submit" onclick="$('#createBookmark').toggle();"><bold>bookmark</bold></button> -->
     <button id=ff15secs class="w3-btn w3-light-gray" type="submit" onclick=changeTime('+',.15)><bold>+15 sec>></bold></button>
-    <button id=resumeTimeline class="w3-btn w3-light-gray" type="submit" onclick= function() { recordCurrentTime=true; } ><bold>Resume Reg Play</bold></button>
+    <button id=resumeTimeline class="w3-btn w3-light-gray" type="submit" onclick="retrieveTime()" disabled="true"><bold>Resume Reg Play</bold></button>
 
 
     <!-- hidden loading gif -->
@@ -53,7 +53,7 @@
     </div>
 
 
-  <div id=bookmarks>
+  <div id=bookmarks name=bookmarks>
     <ul id=bookmark_list style="list-style-type:none">
     </ul>
   </div>
@@ -63,13 +63,15 @@
     <script type='text/javascript'>
 
     current_playing_id = null;
-    activeElement = null;
+    // activeElement = 'a';
     recordCurrentTime = true;
 
     // assigns the active element to the var activeElement (used to stop spacebar control while notating bookmarks)
     document.body.onclick=function() {
       activeElement = document.activeElement.id;
+      // activeElementName = document.activeElement;
       console.log('activeElement = '+activeElement);
+      // console.log('activeElemntName = '+activeElementName);
     }
 
 
@@ -105,15 +107,15 @@
 
 
     // stuff that happens when the page loads
-    console.log('start!')
+    // console.log('start!')
     var aud = document.getElementById('audio')
-    console.log('aud.paused state: '+aud.paused)
+    // console.log('aud.paused state: '+aud.paused)
     //console.log('aud = '+aud)
-    aud.addEventListener('pause', printTime)
+    // aud.addEventListener('pause', printTime)
     // jQuery $('#aud').on('pause', getTime)
-    function printTime (){
-      console.log('current time = '+aud.currentTime)
-    }
+    // function printTime (){
+      // console.log('current time = '+aud.currentTime)
+    // }
 
     // enables spacebar pause/play action
     document.body.onkeypress = function(e){
@@ -144,8 +146,7 @@
     // jQuery for timed events
     $(document).ready(function(){
       console.log('ready!');
-      //i=0;
-      setInterval(saveTime, 10000);
+      setInterval(saveTime, 1000);
     });
 
     // operates the fastforward and rewind buttons
@@ -158,13 +159,13 @@
       };
     }
 
-    // logic for saving bookmarks
+    //saves bookmarks to db
     function saveBookmark() {
       console.log('saveBookmark button pushed!');
       var form = new FormData(document.getElementById('bookmarkForm'));
       var desc = form.get('desc');
       console.log(desc)
-      // if (current_playing_id != null) {
+      if (current_playing_id != null) {
       $.ajax({
         type: 'POST',
         url: '/saveBookmark',
@@ -179,11 +180,12 @@
       });
       $('#createBookmark').toggle();
       }
-     //}
+     }
 
      // saves currentTime for book being played to db
      function saveTime() {
-        if (current_playing_id != null || activeElement == 'bookmark_list')  {
+        if (current_playing_id != null && recordCurrentTime==true )  {
+            console.log('recordCurrentTime in saveTime = '+recordCurrentTime);
           $.ajax({
             type: 'POST',
             url: '/saveTime',
@@ -210,6 +212,8 @@
               console.log('currentBookTime = '+currentBookTime.currentBookTime)
               //console.log('Bookmarks = '+bookmarks)
               aud.currentTime = currentBookTime.currentBookTime;
+              recordCurrentTime = true;
+              $('#resumeTimeline').prop('disabled',true);
               $(loading).hide();
               $(player).show();
             //  console.log('retrieveTime function done ran');
@@ -220,7 +224,7 @@
         });
      }
 
-     // retrieve Bookmark for selected book
+     // retrieve Bookmark for selected book from db
      function retrieveBookmarks() {
         console.log('retrieveBookmark running');
         $.ajax({
@@ -234,8 +238,9 @@
             $('#bookmark_list').empty();
             $('#bookmark_list').html('<h3>Bookmarks</h3>')
             for (i=0; i<data.bookmark.length; i++){
-              $('#bookmark_list').append('<li><a href="avascript:void(0);" onclick=goToTime('+data.bookmark[i]['time']+');>'+data.bookmark[i]['desc']+'</a></li>')
-              console.log(data.bookmark[i]);
+              $('#bookmark_list').append('<li id=bookmark'+data.bookmark[i]['id']+'><a href="avascript:void(0);" onclick=goToTime('+data.bookmark[i]['time']+');>'+data.bookmark[i]['desc']+'</a></li>');
+              // console.log('data.bookmark[i] = '+data.bookmark[i]);
+              console.log('id = bookmark'+data.bookmark[i]['id'])
             }
             // console.log(data.bookmark[0])
             console.log('data = '+data.bookmark[0]['time'])
@@ -245,16 +250,16 @@
           }
          })
         }
+
+
+    // sets play position for selected bookmark
     function goToTime(time){
+      recordCurrentTime = false;
+      console.log('recordCurrentTime = '+recordCurrentTime);
       aud.currentTime=time;
+      $('#resumeTimeline').prop('disabled',false);
     }
 
-    // var get_bookmark_list = function () {
-    //   $('#bookmark_list').click(function(){
-    //     console.log('******'+this.text());
-    //   });
-    //     console.log(tags_li)
-    // }
 
     window.onload = get_li;
     </script>
