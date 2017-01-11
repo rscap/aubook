@@ -39,6 +39,11 @@
       </form>
     </div>
 
+    <div id="curTime">
+      <p id="time"></p>
+
+    </div>
+
     <div id=checkedout_Books>
       <ul style="list-style-type:none">
       {% if booklist|length > 0 %}
@@ -66,12 +71,30 @@
     // activeElement = 'a';
     recordCurrentTime = true;
 
+    // stuff that happens when the page loads
+    // console.log('start!')
+    var aud = document.getElementById('audio')
+    // Attach a "timeupdate" event to the video
+    //aud.addEventListener("timeupdate", getCurTime);
+
+    // Display the current playback position of the video in a p element with id="time"
+    function getCurTime() {
+    document.getElementById("time").innerHTML = "The current playback position is " + aud.currentTime + " seconds.";
+    }
+
+    // console.log('aud.paused state: '+aud.paused);
+
+    // aud.addEventListener('pause', printTime)
+
+    // function printTime (){
+    //   console.log('current time = '+aud.currentTime)
+    // }
+
+
     // assigns the active element to the var activeElement (used to stop spacebar control while notating bookmarks)
     document.body.onclick=function() {
       activeElement = document.activeElement.id;
-      // activeElementName = document.activeElement;
       console.log('activeElement = '+activeElement);
-      // console.log('activeElemntName = '+activeElementName);
     }
 
 
@@ -84,7 +107,8 @@
     //      $('currentPlaying').innerHTML = this.textContent;
     //    });
     // {% endfor %}
-    var get_li = function() {
+
+    var get_books = function() {
       //get the LI tags
       //var tags_li = document.getElementsByTagName('li');
       var book_names = $("[name='book']");
@@ -107,17 +131,6 @@
       }
     };
 
-
-    // stuff that happens when the page loads
-    // console.log('start!')
-    var aud = document.getElementById('audio')
-    // console.log('aud.paused state: '+aud.paused)
-    //console.log('aud = '+aud)
-    // aud.addEventListener('pause', printTime)
-    // jQuery $('#aud').on('pause', getTime)
-    // function printTime (){
-      // console.log('current time = '+aud.currentTime)
-    // }
 
     // enables spacebar pause/play action
     document.body.onkeypress = function(e){
@@ -148,7 +161,7 @@
     // jQuery for timed events
     $(document).ready(function(){
       console.log('ready!');
-      setInterval(saveTime, 1000);
+     setInterval(saveTime,10000);
     });
 
     // operates the fastforward and rewind buttons
@@ -184,6 +197,33 @@
       }
      }
 
+
+     // retrieves times time from db
+     function retrieveTime() {
+       console.log('retrieveTime start')
+        $.ajax({
+          type: 'POST',
+          url: '/retrieveTime',
+          data: JSON.stringify({'book_id':current_playing_id}, null, '\t'),
+          contentType: 'application/json;charset=UTF-8',
+          success: function(currentBookTime) {
+              // console.log('currentBookTime = '+currentBookTime.currentBookTime)
+              // console.log('Bookmarks = '+bookmarks)
+              aud.currentTime = currentBookTime.currentBookTime;
+              recordCurrentTime = true;
+              // console.log('aud.currentTime = '+aud.currentTime)
+              $('#resumeTimeline').prop('disabled',true);
+              $(loading).hide();
+              $(player).show();
+            //  console.log('retrieveTime function done ran');
+          },
+          error: function() {
+              console.log('time not retrieved')
+          }
+        });
+     }
+
+
      // saves currentTime for book being played to db
      function saveTime() {
         if (current_playing_id != null && recordCurrentTime==true )  {
@@ -203,28 +243,6 @@
          }
      }
 
-     // retrieves times time from db
-     function retrieveTime() {
-        $.ajax({
-          type: 'POST',
-          url: '/retrieveTime',
-          data: JSON.stringify({'book_id':current_playing_id}, null, '\t'),
-          contentType: 'application/json;charset=UTF-8',
-          success: function(currentBookTime) {
-              console.log('currentBookTime = '+currentBookTime.currentBookTime)
-              //console.log('Bookmarks = '+bookmarks)
-              aud.currentTime = currentBookTime.currentBookTime;
-              recordCurrentTime = true;
-              $('#resumeTimeline').prop('disabled',true);
-              $(loading).hide();
-              $(player).show();
-            //  console.log('retrieveTime function done ran');
-          },
-          error: function() {
-              console.log('time not retrieved')
-          }
-        });
-     }
 
      // retrieve Bookmark for selected book from db
      function retrieveBookmarks() {
@@ -263,7 +281,7 @@
     }
 
 
-    window.onload = get_li;
+    window.onload = get_books;
     </script>
 
 {% endblock %}
