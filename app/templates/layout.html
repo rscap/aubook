@@ -14,14 +14,30 @@
     {% else %}
     <title>Ersatz Title</title>
     {% endif %}
+
+
   </head>
 
   <body>
-    {% if title %}
-    <h1 class="w3-container w3-blue">{{ title }}</h1>
-    {% else %}
-    <h1 class="w3-container w3-blue">Ersatz Title</h1>
-    {% endif %}
+    <div id='navbar'>
+      <ul class='w3-navbar w3-blue'>
+        <li class="w3-right"><a  href="{{ url_for('logout')}}">Logout</a></li>
+        <li class="w3-right"><a  href="{{ url_for('library')}}">Library</a></li>
+        <li class="w3-right"><a  href="{{ url_for('player')}}">Player</a></li>
+        <li class="w3-right"><a  href="{{ url_for('upload')}}">Upload</a></li>
+
+      </ul>
+    </div>
+
+    <div id='page_title'>
+      {% if title %}
+      <h1 class="w3-container w3-blue">{{ title }}</h1>
+      {% else %}
+      <h1 class="w3-container w3-blue">Ersatz Title</h1><br>
+      {% endif %}
+    </div>
+
+    <div id='flash_messages'>
     {% with messages = get_flashed_messages() %}
       {% if messages %}
         <ul class="w3-ul w3-red">
@@ -31,9 +47,12 @@
         </ul>
       {% endif %}
     {% endwith %}
-    <div class="w3-container">
+    <div>
+
+    <div id='body'>
       {% block body %}
       {% endblock %}
    </div>
+
   </body>
 </html>

@@ -214,7 +214,7 @@ def library():
 
 @app.route('/player')
 @login_required
-def newplayer():
+def player():
     currently_checkedout_books = []
     g.user=current_user
     checkedout_books_by_user = db.session.query(models.BookUser).filter_by(user_id = current_user.id).all()
@@ -234,7 +234,7 @@ def newplayer():
         # print(book.id)
         # print(book.title)
         currently_checkedout_books.append(book)
-    return render_template('player.html',title='player NEW',booklist=currently_checkedout_books,bookInfo=checkedout_books_by_user)
+    return render_template('player.html',title='player',booklist=currently_checkedout_books,bookInfo=checkedout_books_by_user)
 
 
 @app.route('/audio/<path:path>')
