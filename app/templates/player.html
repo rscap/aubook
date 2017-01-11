@@ -43,7 +43,7 @@
       <ul style="list-style-type:none">
       {% if booklist|length > 0 %}
         {% for book in booklist %}
-            <li id={{ book.id }}><a href="javascript:void(0);">{{ book.title }}</a></li>
+            <li name=book id={{ book.id }}><a href="javascript:void(0);">{{ book.title }}</a></li>
         {% endfor %}
       {% else %}
          You have no Books in the checked out<br/>
@@ -86,12 +86,14 @@
     // {% endfor %}
     var get_li = function() {
       //get the LI tags
-      var tags_li = document.getElementsByTagName('li');
-      var nr_li = tags_li.length;
+      //var tags_li = document.getElementsByTagName('li');
+      var book_names = $("[name='book']");
+      var nr_bookID = book_names.length;
+      // var nr_li = tags_li.length;
       // traverse the "tags_li" array
-      for (i=0; i<nr_li; i++) {
+      for (i=0; i<nr_bookID; i++) {
         // apply the 'onclick' event to each, assigning a function that must be called by this event
-        tags_li[i].onclick = function() {
+        book_names[i].onclick = function() {
           // var continut = '/'+this.id+'/'+this.textContent || this.innerText +'.mp3'; // gets the content
           var continut = '/'+this.id+'/'+this.textContent+'.mp3'; // gets the content
           console.log('continut = '+continut)
@@ -99,8 +101,8 @@
           document.getElementById('audio').setAttribute('src', '/audio'+continut);
           document.getElementById('currentPlaying').innerHTML = this.textContent;
           //var t = timeInfo('currentTime=none&book_id='+current_playing_id);
-          retrieveTime(current_playing_id);
-          retrieveBookmarks(current_playing_id);
+          retrieveTime();
+          retrieveBookmarks();
         };
       }
     };
