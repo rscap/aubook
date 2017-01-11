@@ -8,7 +8,7 @@
     {% if booktitle %}
     <h3>{{ booktitle }}</h3>
     {% else %}
-    <h3 id='currentPlaying'>No Book Selected</h3>
+    <h3 id='currentPlaying'>No Book Selected.</h3>
     {% endif %}
 
 
@@ -20,13 +20,18 @@
       </audio>
     </div>
 
-    <!-- buttons -->
-    <button name=rewind15secs id=rewind15secs class="w3-btn w3-light-gray" type="submit" onclick=changeTime('-',.15) ><bold><< -15 sec</bold></button>
-    <button id=bookmark class="w3-btn w3-light-gray" type="submit" onclick="enableBookmarkUI()"><bold>bookmark</bold></button>
-    <!-- <button id=bookmark class="w3-btn w3-light-gray" type="submit" onclick="$('#createBookmark').toggle();"><bold>bookmark</bold></button> -->
-    <button id=ff15secs class="w3-btn w3-light-gray" type="submit" onclick=changeTime('+',.15)><bold>+15 sec>></bold></button>
-    <button id=resumeTimeline class="w3-btn w3-light-gray" type="submit" onclick="retrieveTime()" disabled="true"><bold>Resume Reg Play</bold></button>
+    <div id='buttons'>
+      <!-- buttons -->
+      <button name=rewind15secs id=rewind15secs class="w3-btn w3-light-gray" type="submit" onclick=changeTime('-',.5) ><bold>❰❰ 30</bold></button>
 
+      <button name=rewind15secs id=rewind15secs class="w3-btn w3-light-gray" type="submit" onclick=changeTime('-',.25) ><bold>❰ 15 sec</bold></button>
+      <button id=bookmark class="w3-btn w3-light-gray" type="submit" onclick="enableBookmarkUI()"><bold>bookmark</bold></button>
+      <button id=ff15secs class="w3-btn w3-light-gray" type="submit" onclick=changeTime('+',.15)><bold>15 sec ❱</bold></button>
+      <button id=ff15secs class="w3-btn w3-light-gray" type="submit" onclick=changeTime('+',.5)><bold>30 ❱❱</bold></button>
+      <br><br>
+      <button id=resumeTimeline class="w3-btn w3-light-gray" type="submit" onclick="retrieveTime()" disabled="true"><bold>Resume Reg Play</bold></button>
+      <button id=returnBook class="w3-btn w3-light-gray" type="submit" onclick="removeBook()" ><bold>Remove Book</bold></button>
+    </div>
 
     <!-- hidden loading gif -->
     <img id='loading' style='display: none' src='/static/img/loading.gif'>
@@ -280,6 +285,24 @@
       $('#resumeTimeline').prop('disabled',false);
     }
 
+    function removeBook(){
+      if (current_playing_id != null) {
+        $.ajax({
+          type: 'POST',
+          url: 'removeBook',
+          data: JSON.stringify({'book_id':current_playing_id}, null, '\t'),
+          contentType: 'application/json;charset=UTF-8',
+          success: function() {
+            console.log('book removed')
+          },
+          error: function() {
+            console.log('the book wasn\'t removed.')
+          }
+        })
+      } else {
+        $('#currentPlaying').html("<h3 class=\'w3-text-red\'>  No book slected. Select a book before removing it.<h3>");
+      }
+    }
 
     window.onload = get_books;
     </script>
