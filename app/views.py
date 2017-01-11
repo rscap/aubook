@@ -321,6 +321,18 @@ def retrieveBookmark():
     # print('\n')
     return bookmarks
 
+@app.route('/removeBook', methods=['POST'])
+@login_required
+def removeBook():
+    g.user = current_user
+    print('current_user id = '+str(current_user.id))
+    print('book_id = '+str(request.json['book_id']))
+    q = db.session.query(models.BookUser).filter_by(user_id=current_user.id, book_id=request.json['book_id']).first()
+    print('q = '+str(q))
+    db.session.delete(q)
+    db.session.commit()
+    return ('')
+
 @app.route("/upload", methods=['GET','POST'])
 @login_required
 def upload():

@@ -260,6 +260,9 @@
           success: function(data) {
             console.log('type of = '+typeof data);
             console.log('number of bookmarks = '+data.bookmark.length);
+            // if (data.bookmark.length == '0') {
+            //     $('#bookmark_list').html('You have no bookmarks.')
+            //   }
             $('#bookmark_list').empty();
             $('#bookmark_list').html('<h3>Bookmarks</h3>')
             for (i=0; i<data.bookmark.length; i++){
@@ -267,8 +270,8 @@
               // console.log('data.bookmark[i] = '+data.bookmark[i]);
               console.log('id = bookmark'+data.bookmark[i]['id'])
             }
-            // console.log(data.bookmark[0])
-            console.log('data = '+data.bookmark[0]['time'])
+            console.log(data.bookmark[0])
+            // console.log('data = '+data.bookmark[0]['time'])
           },
           error: function() {
             console.log('didn\'t get bookmarks')
@@ -294,6 +297,7 @@
           contentType: 'application/json;charset=UTF-8',
           success: function() {
             console.log('book removed')
+            location.reload();
           },
           error: function() {
             console.log('the book wasn\'t removed.')
