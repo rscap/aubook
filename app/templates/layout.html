@@ -15,6 +15,13 @@
     <title>Ersatz Title</title>
     {% endif %}
 
+    <script>
+
+      setTimeout(function() {
+      $('#flash_message').fadeOut('fast');
+      }, 3000);
+
+    </script>
 
   </head>
 
@@ -37,12 +44,12 @@
       {% endif %}
     </div>
 
-    <div id='flash_messages'>
+    <div id='flash_message_container'>
     {% with messages = get_flashed_messages() %}
       {% if messages %}
         <ul class="w3-ul w3-red">
         {% for message in messages %}
-          <li>{{ message }} </li>
+          <li id='flash_message'>{{ message }} </li>
         {% endfor %}
         </ul>
       {% endif %}
