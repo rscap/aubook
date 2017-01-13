@@ -64,9 +64,11 @@
 
 
   <div id=bookmarks name=bookmarks>
-    <ul id=bookmark_list style="list-style-type:none">
-    </ul>
-  </div>
+    <!-- <ul id=bookmark_list style="list-style-type:none">
+    </ul> -->
+    <table id=bookmark_list>
+    </table>
+  <div>
     <!-- <button id=buttoni class="w3-btn w3-blue" type="submit" onclick="wowo(buttoni)">buttoni</button> -->
 
 
@@ -192,6 +194,7 @@
         data: JSON.stringify({'book_id':current_playing_id,'time':aud.currentTime,'desc':desc}, null, '\t'),
         contentType:'application/json;charset=UTF-8',
         success: function(){
+          retrieveBookmarks();
           console.log('time saved')
         },
         error: function() {
@@ -265,11 +268,13 @@
             //   }
             $('#bookmark_list').empty();
             $('#bookmark_list').html('<h3>Bookmarks</h3>')
+            // $('#bookmark_list').append('<tr><th></th><th>Description</th><th>Time</th>')
             for (i=0; i<data.bookmark.length; i++){
-              $('#bookmark_list').append('<input type="image" src="{{ url_for('static', filename='img/trash-can.png') }}" width="15" height="15"><li id=bookmark'+data.bookmark[i]['id']+'><a href="avascript:void(0);" onclick=goToTime('+data.bookmark[i]['time']+');>'+data.bookmark[i]['desc']+'</a></li>');
-              // console.log('data.bookmark[i] = '+data.bookmark[i]);
-              console.log('id = bookmark'+data.bookmark[i]['id'])
-            }
+              // $('#bookmark_list').append('<input type="image" src="{{ url_for('static', filename='img/trash-can.png') }}" width="15" height="15"><li id=bookmark'+data.bookmark[i]['id']+'><a href="avascript:void(0);" onclick=goToTime('+data.bookmark[i]['time']+');>'+data.bookmark[i]['desc']+'</a></li>');
+              // console.log('id = bookmark'+data.bookmark[i]['id'])
+              $('#bookmark_list').append(
+                '<tr><th><input type="image" src="{{ url_for('static', filename='img/trash-can.png') }}" width="15" height="15" onclick=removeBookmark('+data.bookmark[i]['id']+')></th><th id=bookmark'+data.bookmark[i]['id']+'><a href="avascript:void(0);"onclick=goToTime('+data.bookmark[i]['time']+');>'+data.bookmark[i]['desc']+'</a></tr>');
+              }
             console.log(data.bookmark[0])
             // console.log('data = '+data.bookmark[0]['time'])
           },
@@ -292,7 +297,7 @@
       if (current_playing_id != null) {
         $.ajax({
           type: 'POST',
-          url: 'removeBook',
+          url: '/removeBook',
           data: JSON.stringify({'book_id':current_playing_id}, null, '\t'),
           contentType: 'application/json;charset=UTF-8',
           success: function() {
@@ -306,6 +311,23 @@
       } else {
         $('#currentPlaying').html("<h3 class=\'w3-text-red\'>  No book slected. Select a book before removing it.<h3>");
       }
+    }
+
+    function removeBookmark(bookmarkId){
+      console.log('desc = '+desc);
+      $.ajax({
+        type: 'POST',
+        url: '/removeBookmark',
+        data: JSON.stringify({'id':bookmarkId}, null, '\t'),
+        contentType: 'application/json;charset=UTF-8',
+        success: function() {
+          console.log('bookmark removed');
+          retrieveBookmarks();
+        },
+        error: function() {
+          console.log('bookmark not removed.')
+        }
+      })
     }
 
     window.onload = get_books;
