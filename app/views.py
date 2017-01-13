@@ -350,7 +350,8 @@ def removeBookmark():
 @login_required
 def test():
     print('test view printing this')
-    return('test view ran')
+    print('data = '+str(request.json['data']))
+    return jsonify(stuff='test view ran')
 
 @app.route("/upload", methods=['GET','POST'])
 @login_required

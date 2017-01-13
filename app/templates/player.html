@@ -299,15 +299,13 @@
           type: 'POST',
           url: '/removeBook',
           data: JSON.stringify({'book_id':current_playing_id}, null, '\t'),
-          contentType: 'application/json;charset=UTF-8',
-          success: function() {
-            console.log('book removed')
-            location.reload();
-          },
-          error: function() {
-            console.log('the book wasn\'t removed.')
-          }
-        })
+          contentType: 'application/json;charset=UTF-8' })
+          .complete( function() {
+              console.log('book removed')
+              location.reload();
+            })
+          .fail( function() {
+               console.log('the book wasn\'t removed.') } );
       } else {
         $('#currentPlaying').html("<h3 class=\'w3-text-red\'>  No book slected. Select a book before removing it.<h3>");
       }
@@ -337,11 +335,11 @@
       $.ajax({
         type: type,
         url: url,
-        data: data,
-        contentType: 'application/json;charset=UTF-8',
-        success: win(),
-        error: lose()
-      })
+        data: JSON.stringify({'data':data}, null, '\t'),
+        contentType: 'application/json;charset=UTF-8'})
+        .done(win())
+        .fail(lose());
+
     }
 
     function win() {
