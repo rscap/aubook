@@ -346,6 +346,12 @@ def removeBookmark():
     db.session.commit()
     return ('')
 
+@app.route('/test', methods=['POST'])
+@login_required
+def test():
+    print('test view printing this')
+    return('test view ran')
+
 @app.route("/upload", methods=['GET','POST'])
 @login_required
 def upload():

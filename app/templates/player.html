@@ -23,7 +23,6 @@
     <div id='buttons'>
       <!-- buttons -->
       <button name=rewind15secs id=rewind15secs class="w3-btn w3-light-gray" type="submit" onclick=changeTime('-',.5) ><bold>❰❰ 30</bold></button>
-
       <button name=rewind15secs id=rewind15secs class="w3-btn w3-light-gray" type="submit" onclick=changeTime('-',.25) ><bold>❰ 15 sec</bold></button>
       <button id=bookmark class="w3-btn w3-light-gray" type="submit" onclick="enableBookmarkUI()"><bold>bookmark</bold></button>
       <button id=ff15secs class="w3-btn w3-light-gray" type="submit" onclick=changeTime('+',.15)><bold>15 sec ❱</bold></button>
@@ -206,6 +205,7 @@
      }
 
 
+
      // retrieves times time from db
      function retrieveTime() {
        console.log('retrieveTime start')
@@ -273,7 +273,7 @@
               // $('#bookmark_list').append('<input type="image" src="{{ url_for('static', filename='img/trash-can.png') }}" width="15" height="15"><li id=bookmark'+data.bookmark[i]['id']+'><a href="avascript:void(0);" onclick=goToTime('+data.bookmark[i]['time']+');>'+data.bookmark[i]['desc']+'</a></li>');
               // console.log('id = bookmark'+data.bookmark[i]['id'])
               $('#bookmark_list').append(
-                '<tr><th><input type="image" src="{{ url_for('static', filename='img/trash-can.png') }}" width="15" height="15" onclick=removeBookmark('+data.bookmark[i]['id']+')></th><th id=bookmark'+data.bookmark[i]['id']+'><a href="avascript:void(0);"onclick=goToTime('+data.bookmark[i]['time']+');>'+data.bookmark[i]['desc']+'</a></tr>');
+                '<tr><td><input type="image" src="{{ url_for('static', filename='img/trash-can.png') }}" width="15" height="15" onclick=removeBookmark('+data.bookmark[i]['id']+')></td><td id=bookmark'+data.bookmark[i]['id']+'><a href="avascript:void(0);"onclick=goToTime('+data.bookmark[i]['time']+');>'+data.bookmark[i]['desc']+'</a></td></tr>');
               }
             console.log(data.bookmark[0])
             // console.log('data = '+data.bookmark[0]['time'])
@@ -328,6 +328,28 @@
           console.log('bookmark not removed.')
         }
       })
+    }
+
+    function schmayjax(type,url,data,win,lose) {
+      console.log('type: '+type);
+      console.log('url: '+url);
+      console.log('data: '+data);
+      $.ajax({
+        type: type,
+        url: url,
+        data: data,
+        contentType: 'application/json;charset=UTF-8',
+        success: win(),
+        error: lose()
+      })
+    }
+
+    function win() {
+      console.log('win ran')
+    }
+
+    function lose() {
+      console.log('lose ran')
     }
 
     window.onload = get_books;
