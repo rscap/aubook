@@ -327,9 +327,12 @@ def removeBook():
     g.user = current_user
     print('current_user id = '+str(current_user.id))
     print('book_id = '+str(request.json['book_id']))
-    q = db.session.query(models.BookUser).filter_by(user_id=current_user.id, book_id=request.json['book_id']).first()
-    print('q = '+str(q))
+    book_to_remove = db.session.query(models.BookUser).filter_by(user_id=current_user.id, book_id=request.json['book_id']).first()
     db.session.delete(q)
+    db.session.query(models.Bookmark).filter_by(user_id=current_user.id, book_id=request.json['book_id']).delete()
+    # print('type bookmarks_to_remove = '+str(type(book_to_remove)))
+    print('q = '+str(q))
+
     db.session.commit()
     return ('')
 
