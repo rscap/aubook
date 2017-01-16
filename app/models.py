@@ -65,7 +65,7 @@ class Book(db.Model):
     def __init__(self, title=None, author=None, shareable=True):
         self.title = title
         self.author = author
-        self.sharable = shareable
+        self.shareable = shareable
         #self.user_id = user_id
 
     def __repr__(self):
