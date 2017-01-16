@@ -1,0 +1,5 @@
+*.pyc
+*.old
+mp3concat.py.backup
+/uploads/*
+.env

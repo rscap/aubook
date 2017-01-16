@@ -1,0 +1,17 @@
+<!-- extned from base layout -->
+{% extends "layout.html" %}
+
+{% block body %}
+<!-- <h1>So you need to reset your password... </h1> -->
+</br>
+<p> Upon providing your email that you registered with you'll receive an email with intstructions.
+<div id=form>
+  <form role="form" method="POST">
+      <div class="form-group">
+          <!-- <label for="email">Enter the email address that you registered with:</label> -->
+          <p><input type="email" class="form-control" id="email" name="email" placeholder="Email address" required autocomplete="off">
+      </div>
+      <button class="w3-btn w3-blue" type="submit" class="btn btn-primary btn-md">Submit</button>
+  </form>
+</div>
+{% endblock %}

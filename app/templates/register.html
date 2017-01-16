@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<title>Register</title>
+<!-- <p>Register to get access to auBooks -->
+<p>Passwords are required to be a minimum of eight characters
+  <!-- {% if error %}
+     <p class="w3-ul w3-red"><strong>Error:</strong> {{ error }}
+  {% endif %} -->
+  <form role="form" method="POST">
+    <p><input class="form-control" type="text" id="name" name="name" placeholder="username" required autocomplete="off">
+    <p><input class="form-control" type="email" id="email" name="email" placeholder="Email address" required autocomplete="off">
+    <!-- <input type="email" class="form-control" id="email" name="email" placeholder="Email address" required autocomplete="off" required onchange="return check()"> -->
+
+    <p><input type="password" class="form-control" id="password" name="password" placeholder="Password">
+    <p><input type="password" class="form-control" id="password2" name="password2" placeholder="Password confirmation" >
+    <p><input class ="w3-btn w3-blue" type=submit value='Registrate me'>
+    <!-- <p><button type="submit" class="w3-btn w3-blue" onclick = "return check();">Submit</button> -->
+  </form>
+
+  <!-- <script>function check() {
+        var password = document.getElementById('password');
+        var password2 = document.getElementById('password2');
+   	 		if ( password2.value != password.value) {
+   	 			 alert("Your passwords don't match.  Please fix that.");
+           return false;
+    		  }
+        }</script> -->
+
+  <p>Already registered? please: <a href="{{ url_for('login')}}">Login</a>
+
+
+{% endblock %}

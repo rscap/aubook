@@ -1,0 +1,35 @@
+<!-- extned from base layout -->
+{% extends "layout.html" %}
+
+{% block body %}
+
+
+
+  <title>Upload new File</title>
+    <h1>Upload new Files</h1>
+    <form action="" method=post enctype=multipart/form-data>
+      <p><input type=text name=title placeholder="Enter book title">
+      <p><input type=text name=author placeholder="Enter book author">
+      <p><input type=file multiple webkitdirectory name=file multiple>
+      <p><input type=checkbox name=shareable checked> Make this audiobook available for others to listen
+      <p><input class="w3-btn w3-blue" type=submit value=UPLOAD>
+      <!-- <p><input type=button value='new upload'> -->
+    </form>
+    <div class='stuff'>STUFF</div>
+
+    <div class='droppable'>Drop your files here.</div>
+
+
+    <br/>
+    <br/>
+    <div>
+      {% if filenames %}
+           <ul class="w3-text-red">
+               {% for name in filenames %}
+           <li>{{ name }}</li>
+         {% endfor %}
+      {% endif %}
+    </div>
+{% endblock %}
+
+<script src='{{ url_for('static', filename='js/dragAndDrop.js') }}' type='text/javascript'></script>
