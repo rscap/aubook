@@ -1,5 +1,7 @@
 *.pyc
 *.old
+.Python
+pip-selfcheck.json
 mp3concat.py.backup
 /uploads/*
 .env
