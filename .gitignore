@@ -3,3 +3,4 @@
 mp3concat.py.backup
 /uploads/*
 .env
+/aubookEnv/*
