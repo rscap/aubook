@@ -263,20 +263,20 @@
           success: function(data) {
             console.log('type of = '+typeof data);
             console.log('number of bookmarks = '+data.bookmark.length);
-            // if (data.bookmark.length == '0') {
-            //     $('#bookmark_list').html('You have no bookmarks.')
-            //   }
-            $('#bookmark_list').empty();
-            $('#bookmark_list').html('<h3>Bookmarks</h3>')
-            // $('#bookmark_list').append('<tr><th></th><th>Description</th><th>Time</th>')
-            for (i=0; i<data.bookmark.length; i++){
-              // $('#bookmark_list').append('<input type="image" src="{{ url_for('static', filename='img/trash-can.png') }}" width="15" height="15"><li id=bookmark'+data.bookmark[i]['id']+'><a href="avascript:void(0);" onclick=goToTime('+data.bookmark[i]['time']+');>'+data.bookmark[i]['desc']+'</a></li>');
-              // console.log('id = bookmark'+data.bookmark[i]['id'])
-              $('#bookmark_list').append(
-                '<tr><td><input type="image" src="{{ url_for('static', filename='img/trash-can.png') }}" width="15" height="15" onclick=removeBookmark('+data.bookmark[i]['id']+')></td><td id=bookmark'+data.bookmark[i]['id']+'><a href="avascript:void(0);"onclick=goToTime('+data.bookmark[i]['time']+');>'+data.bookmark[i]['desc']+'</a></td></tr>');
-              }
-            console.log(data.bookmark[0])
-            // console.log('data = '+data.bookmark[0]['time'])
+            if (data.bookmark.length != '0') {
+                console.log('there are no bookmarks')
+                $('#bookmark_list').empty();
+                $('#bookmark_list').html('<h3>Bookmarks</h3>')
+                // $('#bookmark_list').append('<tr><th></th><th>Description</th><th>Time</th>')
+                for (i=0; i<data.bookmark.length; i++){
+                  // $('#bookmark_list').append('<input type="image" src="{{ url_for('static', filename='img/trash-can.png') }}" width="15" height="15"><li id=bookmark'+data.bookmark[i]['id']+'><a href="avascript:void(0);" onclick=goToTime('+data.bookmark[i]['time']+');>'+data.bookmark[i]['desc']+'</a></li>');
+                  // console.log('id = bookmark'+data.bookmark[i]['id'])
+                  $('#bookmark_list').append(
+                    '<tr><td><input type="image" src="{{ url_for('static', filename='img/trash-can.png') }}" width="15" height="15" onclick=removeBookmark('+data.bookmark[i]['id']+')></td><td id=bookmark'+data.bookmark[i]['id']+'><a href="avascript:void(0);"onclick=goToTime('+data.bookmark[i]['time']+');>'+data.bookmark[i]['desc']+'</a></td></tr>');
+                  }
+                console.log(data.bookmark[0])
+                // console.log('data = '+data.bookmark[0]['time'])
+            }
           },
           error: function() {
             console.log('didn\'t get bookmarks')
