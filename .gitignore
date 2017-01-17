@@ -5,3 +5,5 @@ mp3concat.py.backup
 .env
 /aubookEnv/*
 /lib/python3.5/*
+/bin/*
+/include/*
