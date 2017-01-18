@@ -88,7 +88,7 @@
 
     <script type='text/javascript'>
 
-    // current_playing_id = null;
+    current_playing_id = null;
     // recordCurrentTime = true;
 
     // stuff that happens when the page loads
@@ -99,6 +99,7 @@
 
     // Display the current playback position of the video in a p element with id="time"
     function getCurTime() {
+      console.log('aud.currentTime in getCurTime = '+aud.currentTime)
     document.getElementById("time").innerHTML = "The current playback position is " + aud.currentTime + " seconds.";
     }
 
@@ -111,15 +112,15 @@
     // }
 
 
-    // assigns the active element to the var activeElement (used to stop spacebar control while notating bookmarks)
-    // document.body.onclick=function() {
-    //   activeElement = document.activeElement.id;
-    //   if (activeElement !='') {
-    //     console.log('activeElement = '+activeElement);
-    //   } else {
-    //     console.log('no element selected');
-    //   }
-    // }
+    // Assigns the active element to the var activeElement (used to stop spacebar control while notating bookmarks)
+    document.body.onclick=function() {
+      activeElement = document.activeElement.id;
+      if (activeElement !='') {
+        console.log('activeElement = '+activeElement);
+      } else {
+        console.log('no element selected');
+      }
+    }
 
 
     // jQuery version of javascript below (mostly)
@@ -141,23 +142,27 @@
       // traverse the "tags_li" array
       for (i=0; i<nr_bookID; i++) {
         // apply the 'onclick' event to each, assigning a function that must be called by this event
-        book_names[i].onclick = function() {
-          // var continut = '/'+this.id+'/'+this.textContent || this.innerText +'.mp3'; // gets the content
-          var continut = '/'+this.id+'/'+this.textContent+'.mp3'; // gets the content
-          console.log('continut = '+continut)
-          current_playing_id = this.id
-          document.getElementById('audio').setAttribute('src', '/audio'+continut);
-          console.log('aud.src in get books = '+aud.src)
-          console.log('aud.currentTime in get books = '+aud.currentTime)
-          document.getElementById('currentPlaying').innerHTML = this.textContent;
-          //var t = timeInfo('currentTime=none&book_id='+current_playing_id);
-          retrieveTime();
-          // retrieveBookmarks();
-        };
+        book_names[i].onclick = getBook.bind(book_names[i])
       }
     };
 
+    function getBook() {
+      // var continut = '/'+this.id+'/'+this.textContent || this.innerText +'.mp3'; // gets the content
+      var continut = '/'+this.id+'/'+this.textContent+'.mp3'; // gets the content
+      console.log('continut = '+continut)
+      current_playing_id = this.id
+      document.getElementById('audio').setAttribute('src', '/audio'+continut);
+      console.log('aud.src in get books = '+aud.src)
+      console.log('aud.currentTime in get books = '+aud.currentTime)
+      document.getElementById('currentPlaying').innerHTML = this.textContent;
+      //var t = timeInfo('currentTime=none&book_id='+current_playing_id);
 
+      aud.onloadedmetadata = retrieveTime;
+
+
+      console.log('aud.currentTime in getBooks (bottom)= '+aud.currentTime)
+      // retrieveBookmarks();
+    };
 
     // // enables spacebar pause/play action
     // document.body.onkeypress = function(e){
@@ -176,14 +181,14 @@
     //   }
     // }
 
-    // // controls the bookmark UI
-    // function enableBookmarkUI() {
-    //   if (current_playing_id == null) {
-    //     $('#currentPlaying').html("<h3 class=\'w3-text-red\'>  No book slected. Select book before creating bookmark.<h3>");
-    //   } else {
-    //     $('#createBookmark').toggle();
-    //   }
-    // }
+    // controls the bookmark UI
+    function enableBookmarkUI() {
+      if (current_playing_id == null) {
+        $('#currentPlaying').html("<h3 class=\'w3-text-red\'>  No book slected. Select book before creating bookmark.<h3>");
+      } else {
+        $('#createBookmark').toggle();
+      }
+    }
 
     // jQuery for timed events
     $(document).ready(function(){
@@ -191,39 +196,39 @@
     //  setInterval(saveTime,10000);
     });
 
-    // // operates the fastforward and rewind buttons
-    // function changeTime(op, time) {
-    //   if (op == '+') {
-    //     aud.currentTime = aud.currentTime + time;
-    //   }
-    //   else {
-    //       aud.currentTime = aud.currentTime - time;
-    //   };
-    // }
+    // operates the fastforward and rewind buttons
+    function changeTime(op, time) {
+      if (op == '+') {
+        aud.currentTime = aud.currentTime + time;
+      }
+      else {
+          aud.currentTime = aud.currentTime - time;
+      };
+    }
 
     // //saves bookmarks to db
-    // function saveBookmark() {
-    //   console.log('saveBookmark button pushed!');
-    //   var form = new FormData(document.getElementById('bookmarkForm'));
-    //   var desc = form.get('desc');
-    //   console.log(desc)
-    //   if (current_playing_id != null) {
-    //   $.ajax({
-    //     type: 'POST',
-    //     url: '/saveBookmark',
-    //     data: JSON.stringify({'book_id':current_playing_id,'time':aud.currentTime,'desc':desc}, null, '\t'),
-    //     contentType:'application/json;charset=UTF-8',
-    //     success: function(){
-    //       retrieveBookmarks();
-    //       console.log('time saved')
-    //     },
-    //     error: function() {
-    //         console.log('bookmark not saved')
-    //       }
-    //   });
-    //   $('#createBookmark').toggle();
-    //   }
-    //  }
+    function saveBookmark() {
+      console.log('saveBookmark button pushed!');
+      var form = new FormData(document.getElementById('bookmarkForm'));
+      var desc = form.get('desc');
+      console.log(desc)
+      if (current_playing_id != null) {
+      $.ajax({
+        type: 'POST',
+        url: '/saveBookmark',
+        data: JSON.stringify({'book_id':current_playing_id,'time':aud.currentTime,'desc':desc}, null, '\t'),
+        contentType:'application/json;charset=UTF-8',
+        success: function(){
+          retrieveBookmarks();
+          console.log('time saved')
+        },
+        error: function() {
+            console.log('bookmark not saved')
+          }
+      });
+      $('#createBookmark').toggle();
+      }
+     }
 
 
 
@@ -239,15 +244,15 @@
               console.log('in retrieveTime, aud.currentTime = '+aud.currentTime)
               console.log('currentBookTime = '+currentBookTime.currentBookTime)
               // console.log('Bookmarks = '+bookmarks)
-
-              $('#audio').bind('canplaythrough',function(){
-                console.log('before = '+aud.currentTime);
-               aud.currentTime = currentBookTime.currentBookTime
-                console.log('after = '+aud.currentTime);
-
-              });
+              aud.currentTime = currentBookTime.currentBookTime
+              // $('#audio').bind('canplaythrough',function(){
+              //   console.log('before = '+aud.currentTime);
+              //  aud.currentTime = currentBookTime.currentBookTime
+              //   console.log('after = '+aud.currentTime);
+              //
+              // });
               // recordCurrentTime = true;
-              console.log('aud.currentTime = '+aud.currentTime)
+              console.log('aud.currentTime last in success = '+aud.currentTime)
               // $('#resumeTimeline').prop('disabled',true);
               $(loading).hide();
               $(player).show();
@@ -280,103 +285,103 @@
     //  }
 
 
-    //  // retrieve Bookmark for selected book from db
-    //  function retrieveBookmarks() {
-    //     console.log('retrieveBookmark running');
-    //     $.ajax({
-    //       type: 'POST',
-    //       url: '/retrieveBookmark',
-    //       data: JSON.stringify({'book_id':current_playing_id}, null, '\t'),
-    //       contentType: 'application/json;charset=UTF-8',
-    //       success: function(data) {
-    //         console.log('type of = '+typeof data);
-    //         console.log('number of bookmarks = '+data.bookmark.length);
-    //         if (data.bookmark.length != '0') {
-    //             console.log('there are no bookmarks')
-    //             $('#bookmark_list').empty();
-    //             $('#bookmark_list').html('<h3>Bookmarks</h3>')
-    //             // $('#bookmark_list').append('<tr><th></th><th>Description</th><th>Time</th>')
-    //             for (i=0; i<data.bookmark.length; i++){
-    //               // $('#bookmark_list').append('<input type="image" src="{{ url_for('static', filename='img/trash-can.png') }}" width="15" height="15"><li id=bookmark'+data.bookmark[i]['id']+'><a href="avascript:void(0);" onclick=goToTime('+data.bookmark[i]['time']+');>'+data.bookmark[i]['desc']+'</a></li>');
-    //               // console.log('id = bookmark'+data.bookmark[i]['id'])
-    //               $('#bookmark_list').append(
-    //                 '<tr><td><input type="image" src="{{ url_for('static', filename='img/trash-can.png') }}" width="15" height="15" onclick=removeBookmark('+data.bookmark[i]['id']+')></td><td id=bookmark'+data.bookmark[i]['id']+'><a href="avascript:void(0);"onclick=goToTime('+data.bookmark[i]['time']+');>'+data.bookmark[i]['desc']+'</a></td></tr>');
-    //               }
-    //             console.log(data.bookmark[0])
-    //             // console.log('data = '+data.bookmark[0]['time'])
-    //         }
-    //       },
-    //       error: function() {
-    //         console.log('didn\'t get bookmarks')
-    //       }
-    //      })
-    //     }
+     // retrieve Bookmark for selected book from db
+     function retrieveBookmarks() {
+        console.log('retrieveBookmark running');
+        $.ajax({
+          type: 'POST',
+          url: '/retrieveBookmark',
+          data: JSON.stringify({'book_id':current_playing_id}, null, '\t'),
+          contentType: 'application/json;charset=UTF-8',
+          success: function(data) {
+            console.log('type of = '+typeof data);
+            console.log('number of bookmarks = '+data.bookmark.length);
+            if (data.bookmark.length != '0') {
+                console.log('there are no bookmarks')
+                $('#bookmark_list').empty();
+                $('#bookmark_list').html('<h3>Bookmarks</h3>')
+                // $('#bookmark_list').append('<tr><th></th><th>Description</th><th>Time</th>')
+                for (i=0; i<data.bookmark.length; i++){
+                  // $('#bookmark_list').append('<input type="image" src="{{ url_for('static', filename='img/trash-can.png') }}" width="15" height="15"><li id=bookmark'+data.bookmark[i]['id']+'><a href="avascript:void(0);" onclick=goToTime('+data.bookmark[i]['time']+');>'+data.bookmark[i]['desc']+'</a></li>');
+                  // console.log('id = bookmark'+data.bookmark[i]['id'])
+                  $('#bookmark_list').append(
+                    '<tr><td><input type="image" src="{{ url_for('static', filename='img/trash-can.png') }}" width="15" height="15" onclick=removeBookmark('+data.bookmark[i]['id']+')></td><td id=bookmark'+data.bookmark[i]['id']+'><a href="avascript:void(0);"onclick=goToTime('+data.bookmark[i]['time']+');>'+data.bookmark[i]['desc']+'</a></td></tr>');
+                  }
+                console.log(data.bookmark[0])
+                // console.log('data = '+data.bookmark[0]['time'])
+            }
+          },
+          error: function() {
+            console.log('didn\'t get bookmarks')
+          }
+         })
+        }
 
 
-    // // sets play position for selected bookmark
-    // function goToTime(time){
-    //   recordCurrentTime = false;
-    //   console.log('recordCurrentTime = '+recordCurrentTime);
-    //   aud.currentTime=time;
-    //   $('#resumeTimeline').prop('disabled',false);
-    // }
+    // sets play position for selected bookmark
+    function goToTime(time){
+      recordCurrentTime = false;
+      console.log('recordCurrentTime = '+recordCurrentTime);
+      aud.currentTime=time;
+      $('#resumeTimeline').prop('disabled',false);
+    }
 
-    // function removeBook(){
-    //   if (current_playing_id != null) {
-    //     $.ajax({
-    //       type: 'POST',
-    //       url: '/removeBook',
-    //       data: JSON.stringify({'book_id':current_playing_id}, null, '\t'),
-    //       contentType: 'application/json;charset=UTF-8' })
-    //       .complete( function() {
-    //           console.log('book removed')
-    //           location.reload();
-    //         })
-    //       .fail( function() {
-    //            console.log('the book wasn\'t removed.') } );
-    //   } else {
-    //     $('#currentPlaying').html("<h3 class=\'w3-text-red\'>  No book slected. Select a book before removing it.<h3>");
-    //   }
-    // }
+    function removeBook(){
+      if (current_playing_id != null) {
+        $.ajax({
+          type: 'POST',
+          url: '/removeBook',
+          data: JSON.stringify({'book_id':current_playing_id}, null, '\t'),
+          contentType: 'application/json;charset=UTF-8' })
+          .done( function() {
+              console.log('book removed')
+              location.reload();
+            })
+          .fail( function() {
+               console.log('the book wasn\'t removed.') } );
+      } else {
+        $('#currentPlaying').html("<h3 class=\'w3-text-red\'>  No book slected. Select a book before removing it.<h3>");
+      }
+    }
 
-    // function removeBookmark(bookmarkId){
-    //   console.log('desc = '+desc);
-    //   $.ajax({
-    //     type: 'POST',
-    //     url: '/removeBookmark',
-    //     data: JSON.stringify({'id':bookmarkId}, null, '\t'),
-    //     contentType: 'application/json;charset=UTF-8',
-    //     success: function() {
-    //       console.log('bookmark removed');
-    //       retrieveBookmarks();
-    //     },
-    //     error: function() {
-    //       console.log('bookmark not removed.')
-    //     }
-    //   })
-    // }
-    //
-    // function schmayjax(type,url,data,win,lose) {
-    //   console.log('type: '+type);
-    //   console.log('url: '+url);
-    //   console.log('data: '+data);
-    //   $.ajax({
-    //     type: type,
-    //     url: url,
-    //     data: JSON.stringify({'data':data}, null, '\t'),
-    //     contentType: 'application/json;charset=UTF-8'})
-    //     .done(win())
-    //     .fail(lose());
-    //
-    // }
-    //
-    // function win() {
-    //   console.log('win ran')
-    // }
-    //
-    // function lose() {
-    //   console.log('lose ran')
-    // }
+    function removeBookmark(bookmarkId){
+      console.log('desc = '+desc);
+      $.ajax({
+        type: 'POST',
+        url: '/removeBookmark',
+        data: JSON.stringify({'id':bookmarkId}, null, '\t'),
+        contentType: 'application/json;charset=UTF-8',
+        success: function() {
+          console.log('bookmark removed');
+          retrieveBookmarks();
+        },
+        error: function() {
+          console.log('bookmark not removed.')
+        }
+      })
+    }
+
+    function schmayjax(type,url,data,win,lose) {
+      console.log('type: '+type);
+      console.log('url: '+url);
+      console.log('data: '+data);
+      $.ajax({
+        type: type,
+        url: url,
+        data: JSON.stringify({'data':data}, null, '\t'),
+        contentType: 'application/json;charset=UTF-8'})
+        .done(win())
+        .fail(lose());
+
+    }
+
+    function win() {
+      console.log('win ran')
+    }
+
+    function lose() {
+      console.log('lose ran')
+    }
 
     window.onload = get_books;
     </script>
