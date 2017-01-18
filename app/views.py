@@ -349,9 +349,10 @@ def removeBookmark():
 @app.route('/test', methods=['POST'])
 @login_required
 def test():
+    g.user = current_user
+    booklist = db.session.query(models.BookUser).filter_by(user_id=current_user).all()
     print('test view printing this')
-    print('data = '+str(request.json['data']))
-    return jsonify(stuff='test view ran')
+    return ('')
 
 @app.route("/upload", methods=['GET','POST'])
 @login_required
