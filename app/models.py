@@ -71,6 +71,13 @@ class Book(db.Model):
     def __repr__(self):
         return "<Book(title='%s', author='%s',shareable='%s')>" % (self.title, self.author, self.shareable)
 
+    def seralize(self):
+        return {
+            'id':self.id,
+            'title': self.title,
+            'author': self.author,
+        }
+
 class Bookmark(db.Model):
     __tablename__ = 'bookmarks'
     id = db.Column(db.Integer, primary_key=True)

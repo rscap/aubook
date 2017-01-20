@@ -236,7 +236,6 @@ def player():
         currently_checkedout_books.append(book)
     return render_template('player.html',title='player',booklist=currently_checkedout_books,bookInfo=checkedout_books_by_user)
 
-
 @app.route('/audio/<path:path>')
 @login_required
 def serve_audio(path):
@@ -286,6 +285,32 @@ def saveBookmark():
     db.session.add(newBookmark)
     db.session.commit()
     return ('')
+
+@app.route('/getBooks')
+@login_required
+def getBooks():
+    print('getBooks start')
+    currently_checkedout_books = []
+    g.user = current_user
+    checkedout_books_by_user = db.session.query(models.BookUser).filter_by(user_id = current_user.id).all()
+    for entry in checkedout_books_by_user:
+        book = db.session.query(models.Book).filter_by(id = entry.book_id).one()
+        currently_checkedout_books.append(book)
+    l = []
+    for e in currently_checkedout_books:
+        print('e = '+str(e))
+        dict = e.seralize()
+        # print('dict[\'time\'] = '+str(dict['time']))
+        # print('type(dict) = '+str(type(dict)))
+        # print('dict = '+str(dict))
+        #l.append(e.seralize())
+        l.append(dict)
+    # print('\n')
+    print('l = '+str(l))
+    # print('\n')
+    # booklist = jsonify({'book': l})
+    booklist = jsonify(l)
+    return booklist
 
 @app.route('/retrieveBookmark', methods=['POST'])
 @login_required
