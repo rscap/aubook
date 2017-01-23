@@ -236,13 +236,20 @@ $(document).ready(function(){
 //   $('#resumeTimeline').prop('disabled',false);
 // }
 
-function removeBook(){
+function removeBook(book){
   console.log('removeBook start');
-  if (current_playing_id != null) {
+  // str = JSON.stringify(book, null, 4);
+  // console.log(str)
+  // console.log('bookid = '+book.data.id)
+  // console.log(JSON.stringify(event.data))
+  // console.log('book '+book[0])
+  // console.log('book id = '+book.id)
+  // if (current_playing_id != null) {
     $.ajax({
       type: 'POST',
       url: '/removeBook',
-      data: JSON.stringify({'book_id':current_playing_id}, null, '\t'),
+      // data: JSON.stringify({'book_id':current_playing_id}, null, '\t'),
+      data: JSON.stringify({'book_id':book.data.id}, null, '\t'),
       contentType: 'application/json;charset=UTF-8' })
       .done( function() {
           console.log('book removed')
@@ -250,9 +257,10 @@ function removeBook(){
         })
       .fail( function() {
            console.log('the book wasn\'t removed.') } );
-  } else {
-    $('#currentPlaying').html("<h3 class=\'w3-text-red\'>  No book slected. Select a book before removing it.<h3>");
-  }
+
+  // } else {
+  //   $('#currentPlaying').html("<h3 class=\'w3-text-red\'>  No book slected. Select a book before removing it.<h3>");
+  // }
 }
 
 // function removeBookmark(bookmarkId){
@@ -295,6 +303,7 @@ function win2(data) {
   console.log('type of = '+typeof data);
   console.log(data);
   console.log(data[0]);
+  console.log(data[0]['id']);
   console.log('number of book(s) = '+data.length);
   if (data.length == '0') {
       console.log('there are no books');
@@ -311,7 +320,7 @@ function win2(data) {
     //     '<tr><td><input type="image" src="{{ url_for('static', filename='img/trash-can.png') }}" width="15" height="15" onclick=removeBook( '+data.book[i]['id']+')></td><td><a href="javascript:void(0);"onclick=setBook('+data.book[i]+')> '+data.book[i]['title']+'</a></td></tr>');}
     container = $('#checkedout_Books');
     $.each(data, function(i,book){
-      console.log(book.id)
+      console.log('book id in each loop = '+book.id);
       // create the DOM
          link = $('<a>'),
          inp = $('<img>'),
@@ -320,14 +329,14 @@ function win2(data) {
          p = $('<p>');
       // inp.click('removeBook(book.id)');
       inp.attr({'src':'static/img/trash-can.png','width':'15','height':'15'});
-      inp.click(removeBook);
+      inp.click(book,removeBook);
       inp.appendTo(cell);
       inp.appendTo(row);
-      link.attr('href','javascript:void(0)').text(book.title).appendTo(cell)
+      link.attr('href','javascript:void(0)').text(book.title).appendTo(cell);
+      // link.click(setBook);
+      link.click(book,setBook);
       cell.appendTo(row);
       row.appendTo(container);
-      // p.text(book.title);
-      // p.appendTo(container);
     });
       }
     // $('#checkedout_Books').append('</table>')
@@ -340,7 +349,15 @@ function lose() {
 }
 
 function setBook(book) {
-  console.log('clicked '+book.title)
+  console.log('clicked '+book.data.title);
+  var continut = '/'+book.data.id+'/'+this.textContent+'.mp3'; // gets the content
+    console.log('continut = '+continut)
+  //   current_playing_id = this.id
+  document.getElementById('audio').setAttribute('src', '/audio'+continut);
+  //   console.log('aud.src in get books = '+aud.src)
+  //   console.log('aud.currentTime in get books = '+aud.currentTime)
+  document.getElementById('currentPlaying').innerHTML = this.textContent;
+  //var t = timeInfo('currentTime=none&book_id='+current_playing_id);
 }
 
 // window.onload = "get_books2()";
