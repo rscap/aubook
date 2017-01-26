@@ -16,7 +16,7 @@
 
 
     <div id='player'>
-      <audio id='audio' onclick="play(this)" controls="true">
+      <audio id='audio' src="" onclick="play(this)" controls="true">
         <!-- <source src="static/audio/foo/foo.mp3" > -->
         <!-- <source src="" > -->
         Your browser does not support the audio element.
@@ -24,8 +24,8 @@
     </div>
 
     <div id='player2'>
-      <audio id='audio2' onclick="play(this)" controls="true">
-        <source src="static/audio/14/beep.mp3" >
+      <audio id='audio2' onclick="play(this)" controls>
+        <source src="audio/14/beep.mp3" >
         Your browser does not support the audio element.
       </audio>
     </div>
@@ -40,7 +40,6 @@
       <button id=ff15secs class="w3-btn w3-light-gray" type="submit" onclick=changeTime('+',.5)><bold>30 ❱❱</bold></button>
       <br><br>
       <button id=resumeTimeline class="w3-btn w3-light-gray" type="submit" onclick="retrieveTime()" disabled="true"><bold>Resume Reg Play</bold></button>
-      <button id=returnBook class="w3-btn w3-light-gray" type="submit" onclick="removeBook()" ><bold>Remove Book</bold></button>
     </div>
 
     <!-- hidden loading gif -->
@@ -60,16 +59,7 @@
     </div>
 
     <div id=checkedout_Books>
-      <!-- <ul style="list-style-type:none">
-      {% if booklist|length > 0 %}
-        {% for book in booklist %}
-            <li name=book id={{ book.id }}><a href="javascript:void(0);">{{ book.title }}</a></li>
-        {% endfor %}
-      {% else %}
-         You have no Books in the checked out<br/>
-         Head over to the <a href="{{ url_for('library')}}">Library<a>
-      {% endif %}
-      </ul> -->
+
     </div>
 
 

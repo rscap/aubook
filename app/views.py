@@ -306,7 +306,7 @@ def getBooks():
         #l.append(e.seralize())
         l.append(dict)
     # print('\n')
-    print('l = '+str(l))
+    # print('l = '+str(l))
     # print('\n')
     # booklist = jsonify({'book': l})
     booklist = jsonify(l)
@@ -331,10 +331,10 @@ def retrieveBookmark():
         #l.append(e.seralize())
         l.append(dict)
     # print('\n')
-    # print('l = '+str(l))
+    print('l = '+str(l))
     # print('\n')
-    bookmarks = jsonify({'bookmark': l})
-    # bookmarks = jsonify(l)
+    #bookmarks = jsonify({'bookmark': l})
+    bookmarks = jsonify(l)
     # print('\n')
     # print('bookmarks = '+str(bookmarks))
     # print('\n')
@@ -349,8 +349,9 @@ def retrieveBookmark():
 @app.route('/removeBook', methods=['POST'])
 @login_required
 def removeBook():
+    print('removeBook start')
     g.user = current_user
-    print('current_user id = '+str(current_user.id))
+    # print('current_user id = '+str(current_user.id))
     print('book_id = '+str(request.json['book_id']))
     book_to_remove = db.session.query(models.BookUser).filter_by(user_id=current_user.id, book_id=request.json['book_id']).first()
     db.session.delete(book_to_remove)
