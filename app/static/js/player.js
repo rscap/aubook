@@ -39,7 +39,7 @@ document.body.onclick=function() {
 // enables spacebar pause/play action
 document.body.onkeypress = function(e){
   if (activeElement != 'desc') {
-    if(e.keyCode == 32){
+    if(e.keyCode == 32 || e.charCode === 32){
       console.log('space bar pressed')
       if (aud.paused) {
         console.log('status is paused')
@@ -58,6 +58,7 @@ function enableBookmarkUI() {
   if (current_playing_id == null) {
     $('#currentPlaying').html("<h3 class=\'w3-text-red\'>  No book slected. Select book before creating bookmark.<h3>");
   } else {
+    $('createBookmark').empty();
     $('#createBookmark').toggle();
   }
 }
@@ -92,7 +93,7 @@ function saveBookmark() {
     contentType:'application/json;charset=UTF-8',
     success: function(){
       retrieveBookmarks();
-      console.log('time saved')
+      console.log('time saved');
     },
     error: function() {
         console.log('bookmark not saved')
@@ -159,65 +160,43 @@ function saveBookmark() {
 
  // retrieve Bookmark for selected book from db
  function retrieveBookmarks() {
-  //  if (current_playing_id !='null') {
     $.ajax({
       type: 'POST',
       url: '/retrieveBookmark',
       data: JSON.stringify({'book_id':current_playing_id}, null, '\t'),
       contentType: 'application/json;charset=UTF-8',
       success: function(data) {
-        console.log('type of = '+typeof data);
-        console.log('number of bookmarks = '+data.length);
-        $.each(data, function(i,bookmark) {
-          console.log('type of = '+typeof data);
-          console.log('bookmark.desc = '+bookmark.desc)
-          // console.log('data[i] = '+data[i])
-          console.log('i = '+i)
-        }
-      )
-
-       }
-      //   if (data.bookmark.length != '0') {
-      //       console.log('there are bookmarks');
-      //       container = $('#bookmarks');
-      //       container.empty();
-      //       container.html('<h3>Bookmarks</h3>');
-      //       // $('#bookmark_list').append('<tr><th></th><th>Description</th><th>Time</th>')
-      //       $.each(data.bookmark, function(i,bookmark){
-      //         console.log('data = '+data);
-      //         console.log('bookmark = '+bookmark);
-      //         console.log('data.bookmark.id = '+data.bookmark.id);
-      //         // create the DOM
-      //            link = $('<a>'),
-      //            trshcn = $('<img>'),
-      //            cell = $('<td>'),
-      //            row = $('<tr>');
-      //            p = $('<p>');
-      //         trshcn.attr({'src':'static/img/trash-can.png','width':'15','height':'15'});
-      //         // trshcn.click(book,removeBookmark);
-      //         trshcn.appendTo(cell);
-      //         trshcn.appendTo(row);
-      //         link.attr('href','javascript:void(0)').text(data.bookmark.desc).appendTo(cell);
-      //         // link.click(book,setBook);
-      //         cell.appendTo(row);
-      //         row.appendTo(container);
-      //       })
-      //       // for (i=0; i<data.bookmark.length; i++){
-      //       //   $('#bookmark_list').append('<img type="image" src="{{ url_for('static', filename='img/trash-can.png') }}" width="15" height="15"><li id=bookmark'+data.bookmark[i]['id']+'><a href="avascript:void(0);" onclick=goToTime('+data.bookmark[i]['time']+');>'+data.bookmark[i]['desc']+'</a></li>');
-      //       //   console.log('id = bookmark'+data.bookmark[i]['id'])
-      //         // $('#bookmark_list').append(
-      //         //   '<tr><td><input type="image" src="{{ url_for('static', filename='img/trash-can.png') }}" width="15" height="15" onclick=removeBookmark('+data.bookmark[i]['id']+')></td><td id=bookmark'+data.bookmark[i]['id']+'><a href="avascript:void(0);"onclick=goToTime('+data.bookmark[i]['time']+');>'+data.bookmark[i]['desc']+'</a></td></tr>');
-      //
-      //   } else {
-      //     console.log('there are no bookmarks.')
-      //   }
-      // },
-      // error: function() {
-      //   console.log('didn\'t get bookmarks')
-      // }
-     })
-    }
-
+        if (data.length != 0) {
+            console.log('type of = '+typeof data);
+            console.log('number of bookmarks = '+data.length);
+            container = $('#bookmarks');
+            container.empty();
+            container.html('<h3>Bookmarks</h3>');
+            $.each(data, function(i,bookmark) {
+              console.log('type of = '+typeof data);
+              console.log('bookmark.desc = '+bookmark.desc);
+             // create the DOM
+             link = $('<a>'),
+             trshcn = $('<img>'),
+             cell = $('<td>'),
+             row = $('<tr>');
+             p = $('<p>');
+             trshcn.attr({'src':'static/img/trash-can.png','width':'15','height':'15'});
+             // trshcn.click(book,removeBookmark);
+             trshcn.appendTo(cell);
+             trshcn.appendTo(row);
+             link.attr('href','javascript:void(0)').text(bookmark.desc).appendTo(cell);
+             // link.click(book,setBook);
+             cell.appendTo(row);
+             row.appendTo(container);
+          })
+        } else { console.log('no bookmarks'); }
+      },
+     error: function() {
+        console.log('didn\'t get bookmarks');
+  }
+});
+}
 
 
 // // sets play position for selected bookmark
